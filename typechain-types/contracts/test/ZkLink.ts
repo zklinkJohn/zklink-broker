@@ -8,6 +8,7 @@ import type {
   FunctionFragment,
   Result,
   Interface,
+  EventFragment,
   AddressLike,
   ContractRunner,
   ContractMethod,
@@ -17,6 +18,7 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
+  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
 } from "../../common";
@@ -62,9 +64,13 @@ export interface ZkLinkInterface extends Interface {
       | "depositETH"
       | "getSynchronizedProgress"
       | "receiveSynchronizationProgress"
+      | "setTokenId"
+      | "tokenIdMap"
       | "tokenIds"
       | "withdrawPendingBalance"
   ): FunctionFragment;
+
+  getEvent(nameOrSignatureOrTopic: "Accept"): EventFragment;
 
   encodeFunctionData(
     functionFragment: "acceptERC20",
@@ -119,6 +125,14 @@ export interface ZkLinkInterface extends Interface {
     values: [BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTokenId",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenIdMap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokenIds",
     values: [AddressLike]
   ): string;
@@ -153,11 +167,31 @@ export interface ZkLinkInterface extends Interface {
     functionFragment: "receiveSynchronizationProgress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setTokenId", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "tokenIdMap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenIds", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawPendingBalance",
     data: BytesLike
   ): Result;
+}
+
+export namespace AcceptEvent {
+  export type InputTuple = [
+    from: AddressLike,
+    to: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [from: string, to: string, amount: bigint];
+  export interface OutputObject {
+    from: string;
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export interface ZkLink extends BaseContract {
@@ -277,6 +311,14 @@ export interface ZkLink extends BaseContract {
     "nonpayable"
   >;
 
+  setTokenId: TypedContractMethod<
+    [tokenId: BigNumberish, addr: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  tokenIdMap: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+
   tokenIds: TypedContractMethod<[tokenAddress: AddressLike], [bigint], "view">;
 
   withdrawPendingBalance: TypedContractMethod<
@@ -372,6 +414,16 @@ export interface ZkLink extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setTokenId"
+  ): TypedContractMethod<
+    [tokenId: BigNumberish, addr: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "tokenIdMap"
+  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+  getFunction(
     nameOrSignature: "tokenIds"
   ): TypedContractMethod<[tokenAddress: AddressLike], [bigint], "view">;
   getFunction(
@@ -382,5 +434,24 @@ export interface ZkLink extends BaseContract {
     "nonpayable"
   >;
 
-  filters: {};
+  getEvent(
+    key: "Accept"
+  ): TypedContractEvent<
+    AcceptEvent.InputTuple,
+    AcceptEvent.OutputTuple,
+    AcceptEvent.OutputObject
+  >;
+
+  filters: {
+    "Accept(address,address,uint128)": TypedContractEvent<
+      AcceptEvent.InputTuple,
+      AcceptEvent.OutputTuple,
+      AcceptEvent.OutputObject
+    >;
+    Accept: TypedContractEvent<
+      AcceptEvent.InputTuple,
+      AcceptEvent.OutputTuple,
+      AcceptEvent.OutputObject
+    >;
+  };
 }

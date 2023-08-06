@@ -19,6 +19,7 @@ import {
 } from '../utils/withdrawal'
 import { watcherServerClient, witnessRpcClient } from './client'
 import { SignTxsReturns } from '../witness/routers/signTxs'
+import { arrayify } from '@ethersproject/bytes'
 
 const MAX_ACCEPT_FEE_RATE = BigInt(10000)
 async function fetchFeeData(chainId: number) {
@@ -52,7 +53,7 @@ interface RequestObject extends Omit<Request, 'functionData'> {
   functionData: FastWithdrawTxsResp
 }
 
-async function encodeRequestsData(
+export async function encodeRequestsData(
   requests: Request[],
   mainContract: Address
 ): Promise<string> {
@@ -64,6 +65,43 @@ async function encodeRequestsData(
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
   const { signature } = await requestWitnessSignature(txHashs, mainContract)
+  const datas = []
+  const amounts = []
+
+  for (let index = 0; index < objRequests.length; index++) {
+    const v = objRequests[index]
+
+    let data: string, amount: bigint
+    if (v.functionData.tx.type === 'ForcedExit') {
+      ;[data, amount] = await buildForcedExitFromTx(
+        v.functionData as ForcedExitRow,
+        mainContract
+      )
+    } else if (v.functionData.tx.type === 'Withdraw') {
+      ;[data, amount] = await buildFastWithdrawFromTx(
+        v.functionData as FastWithdrawRow,
+        mainContract
+      )
+    } else {
+      throw new Error('fastwithdraw type should be forcedExit or withdraw')
+    }
+    datas.push(data)
+    amounts.push(amount)
+  }
+  return encodeBatchAccept([datas, amounts, arrayify(signature)])
+}
+
+//only for test
+export async function __encodeRequestsData(
+  requests: Request[],
+  mainContract: Address
+): Promise<[string[], bigint[]]> {
+  const objRequests: RequestObject[] = requests.map((v) => {
+    return {
+      ...v,
+      functionData: JSON.parse(v.functionData),
+    }
+  })
 
   const datas = []
   const amounts = []
@@ -88,8 +126,7 @@ async function encodeRequestsData(
     datas.push(data)
     amounts.push(amount)
   }
-
-  return encodeBatchAccept([datas, amounts, signature])
+  return [datas, amounts]
 }
 
 async function buildForcedExitFromTx(

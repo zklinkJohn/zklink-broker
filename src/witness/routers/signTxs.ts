@@ -22,6 +22,7 @@ export async function signTxs(
     for (let v of txHashs) {
       const response = await zklinkRpcClient.request('getTransactionByHash', [
         v,
+        false,
       ])
 
       if (response.error) {

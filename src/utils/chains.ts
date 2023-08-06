@@ -26,6 +26,11 @@ export async function fetchChains(): Promise<ChainInfo[]> {
   }
 }
 
+//only for test
+export function __setChainInfo(chain: ChainInfo) {
+  chains.push(chain)
+}
+
 export async function fetchAccount(address: string): Promise<AccountInfoResp> {
   const result = await zklinkRpcClient
     .request('getAccount', [address])

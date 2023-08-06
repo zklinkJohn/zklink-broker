@@ -10,7 +10,7 @@ const BROKER_ROLE = keccak256(toUtf8Bytes('BROKER_ROLE'))
 const WITNESS_ROLE = keccak256(toUtf8Bytes('WITNESS_ROLE'))
 const FUND_ROLE = keccak256(toUtf8Bytes('FUND_ROLE'))
 
-describe('Broker', function () {
+describe('BrokerAccepter', function () {
   let broker: BrokerAccepter
   let token: MockToken
   let brokerAddress

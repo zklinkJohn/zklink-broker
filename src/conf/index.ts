@@ -20,7 +20,7 @@ export const BROKER_SINGER_PRIVATE_KEY = process.env.BROKER_SINGER_PRIVATE_KEY
 export const BROKER_FEE_POLICY = process.env.BROKER_FEE_POLICY
 // This number is used to control the maximum number of transactions to be merged.
 export const BROKER_MAXIMUM_PACK_TX_LIMIT = Number(
-  process.env.BROKER_MAXIMUM_PACK_TX_LIMIT
+  process.env.BROKER_MAXIMUM_PACK_TX_LIMIT || 10
 )
 // This number is used to control the maximum number of transactions to be merged.
 export const BROKER_TX_GAS_LIMIT = '100000'

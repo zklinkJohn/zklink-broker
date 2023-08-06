@@ -4,6 +4,7 @@
 
 import { ethers } from "ethers";
 import {
+  DeployContractOptions,
   FactoryOptions,
   HardhatEthersHelpers as HardhatEthersHelpersBase,
 } from "@nomicfoundation/hardhat-ethers/types";
@@ -151,139 +152,139 @@ declare module "hardhat/types/runtime" {
 
     deployContract(
       name: "AccessControl",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControl>;
     deployContract(
       name: "AccessControlDefaultAdminRules",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlDefaultAdminRules>;
     deployContract(
       name: "IAccessControl",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
     deployContract(
       name: "IAccessControlDefaultAdminRules",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControlDefaultAdminRules>;
     deployContract(
       name: "IERC5313",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC5313>;
     deployContract(
       name: "ERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
     deployContract(
       name: "IERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
       name: "ERC165",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC165>;
     deployContract(
       name: "IERC165",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
     deployContract(
       name: "Multicall",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Multicall>;
     deployContract(
       name: "BrokerAccepter",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BrokerAccepter>;
     deployContract(
       name: "MockToken",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockToken>;
     deployContract(
       name: "ZkLink",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ZkLink>;
     deployContract(
       name: "IZkLink",
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IZkLink>;
 
     deployContract(
       name: "AccessControl",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControl>;
     deployContract(
       name: "AccessControlDefaultAdminRules",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AccessControlDefaultAdminRules>;
     deployContract(
       name: "IAccessControl",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControl>;
     deployContract(
       name: "IAccessControlDefaultAdminRules",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IAccessControlDefaultAdminRules>;
     deployContract(
       name: "IERC5313",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC5313>;
     deployContract(
       name: "ERC20",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
     deployContract(
       name: "IERC20",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
       name: "ERC165",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC165>;
     deployContract(
       name: "IERC165",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165>;
     deployContract(
       name: "Multicall",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Multicall>;
     deployContract(
       name: "BrokerAccepter",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BrokerAccepter>;
     deployContract(
       name: "MockToken",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockToken>;
     deployContract(
       name: "ZkLink",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ZkLink>;
     deployContract(
       name: "IZkLink",
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IZkLink>;
 
     // default types
@@ -303,12 +304,12 @@ declare module "hardhat/types/runtime" {
     ): Promise<ethers.Contract>;
     deployContract(
       name: string,
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<ethers.Contract>;
     deployContract(
       name: string,
       args: any[],
-      signerOrOptions?: ethers.Signer | FactoryOptions
+      signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<ethers.Contract>;
   }
 }

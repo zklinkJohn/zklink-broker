@@ -35,6 +35,7 @@ export interface BrokerAccepterInterface extends Interface {
       | "acceptDefaultAdminTransfer"
       | "acceptERC20"
       | "acceptETH"
+      | "approveZkLink"
       | "batchAccept"
       | "batchAcceptERC20"
       | "batchAcceptETH"
@@ -108,6 +109,10 @@ export interface BrokerAccepterInterface extends Interface {
   encodeFunctionData(
     functionFragment: "acceptETH",
     values: [BytesLike, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approveZkLink",
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "batchAccept",
@@ -246,6 +251,10 @@ export interface BrokerAccepterInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "acceptETH", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "approveZkLink",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "batchAccept",
     data: BytesLike
@@ -521,6 +530,12 @@ export interface BrokerAccepter extends BaseContract {
     "nonpayable"
   >;
 
+  approveZkLink: TypedContractMethod<
+    [contractAddress: AddressLike, amount: BigNumberish],
+    [boolean],
+    "nonpayable"
+  >;
+
   batchAccept: TypedContractMethod<
     [data: BytesLike[], amounts: BigNumberish[], signature: BytesLike],
     [void],
@@ -690,6 +705,13 @@ export interface BrokerAccepter extends BaseContract {
   ): TypedContractMethod<
     [data: BytesLike, amount: BigNumberish, signature: BytesLike],
     [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "approveZkLink"
+  ): TypedContractMethod<
+    [contractAddress: AddressLike, amount: BigNumberish],
+    [boolean],
     "nonpayable"
   >;
   getFunction(
