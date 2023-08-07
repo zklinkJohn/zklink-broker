@@ -1,3 +1,4 @@
+import { arrayify } from '@ethersproject/bytes'
 import {
   IOrderedRequestStore,
   PackedTransaction,
@@ -17,9 +18,8 @@ import {
   FastWithdrawTxsResp,
   ForcedExitRow,
 } from '../utils/withdrawal'
-import { watcherServerClient, witnessRpcClient } from './client'
 import { SignTxsReturns } from '../witness/routers/signTxs'
-import { arrayify } from '@ethersproject/bytes'
+import { watcherServerClient, witnessRpcClient } from './client'
 
 const MAX_ACCEPT_FEE_RATE = BigInt(10000)
 async function fetchFeeData(chainId: number) {
@@ -27,6 +27,7 @@ async function fetchFeeData(chainId: number) {
     chainId,
   ])
   if (response.error) {
+    console.log(1, response.error)
     return Promise.reject(response.error)
   } else {
     return response.result
@@ -41,8 +42,8 @@ async function requestWitnessSignature(
     txs,
     mainContract,
   ])
-
   if (response.error) {
+    console.log(2, response.error)
     return Promise.reject(response.error)
   } else {
     return response.result
@@ -65,6 +66,7 @@ export async function encodeRequestsData(
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
   const { signature } = await requestWitnessSignature(txHashs, mainContract)
+  console.log('🚀 ~ file: parallel.ts:68 ~ signature:', signature)
   const datas = []
   const amounts = []
 
@@ -237,7 +239,6 @@ export function populateTransaction(chainId: ChainId, mainContract: Address) {
     } else {
       fee.gasPrice = feeData[BROKER_FEE_POLICY].gasPrice
     }
-
     return {
       to: mainContract,
       data: calldata,
@@ -255,9 +256,9 @@ export class OrderedRequestStore implements IOrderedRequestStore {
       const r = await pool.query(
         `
           INSERT INTO requests
-            (function_data, tx_id, chain_id, log_id)
+            (function_data, tx_id, chain_id)
           VALUES
-            ('${v.functionData}', '', ${v.chainId}, ${v.logId})
+            ('${v.functionData}', '', ${v.chainId})
           RETURNING id;
         `
       )
@@ -399,7 +400,6 @@ function buildRequest(obj: {
   function_data: string
   tx_id: string
   chain_id: number
-  log_id: number
   created_at: string
 }): Request {
   return {
@@ -407,7 +407,6 @@ function buildRequest(obj: {
     functionData: obj.function_data,
     txId: obj.tx_id,
     chainId: obj.chain_id,
-    logId: obj.log_id,
     createdAt: new Date(obj.created_at).getTime(),
   } as Request
 }

@@ -8,12 +8,10 @@ import {
   POLLING_LOGS_LIMIT,
 } from '../conf'
 import { brokerContracts } from '../conf/chains'
-import {
-  insertProcessedLogs,
-  selectLatestExecutedTimestamp,
-} from '../db/process'
+import { selectLatestExecutedTimestamp } from '../db/process'
+import { ChainId } from '../types'
 import { getBlockConfirmations } from '../utils/blockConfirmations'
-import { ChainInfo, getChains } from '../utils/chains'
+import { getChains } from '../utils/chains'
 import { sleep } from '../utils/sleep'
 import { FastWithdrawTxsResp, groupingRequestParams } from '../utils/withdrawal'
 import { zklinkRpcClient } from './client'
@@ -23,10 +21,13 @@ export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
   private timestamp: number = 0 // start log id of fetch new event logs
 
-  async initSigners(chains: ChainInfo[]) {
+  async initSigners(enabledChains: ChainId[]) {
+    const layer2Chains = getChains()
     const blockConfirmations = getBlockConfirmations()
-    for (let k in chains) {
-      const { web3Url, layerOneChainId } = chains[k]
+    for (let k of enabledChains) {
+      const { web3Url, layerOneChainId } = layer2Chains.find(
+        (v) => Number(v.layerOneChainId) === Number(k)
+      )
       const chainId = Number(layerOneChainId)
 
       // broker contract address for v.chainId
@@ -66,7 +67,6 @@ export class AssistWithdraw {
       })
       this.signers[layerOneChainId].sendTransactions(txs)
     }
-    await insertProcessedLogs(rows)
     const latestTimestamp = Math.max(
       ...rows.map((v) => new Date(v.executedTimestamp).getTime())
     )
@@ -87,8 +87,8 @@ export class AssistWithdraw {
   // If not available, initiate scanning using predefined constant timestamps.
   async restoreTimestamp() {
     const r = await selectLatestExecutedTimestamp()
-    if (r.rows[0] && r.rows[0]?.executed_at) {
-      this.updateTimestamp(new Date(r.rows[0].executed_at).getTime())
+    if (r) {
+      this.updateTimestamp(new Date(r).getTime())
     } else {
       this.updateTimestamp(new Date(BROKER_STARTED_TIME).getTime())
     }

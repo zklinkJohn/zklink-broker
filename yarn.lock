@@ -7647,10 +7647,10 @@ packet-reader@1.0.0:
   resolved "https://registry.npmmirror.com/packet-reader/-/packet-reader-1.0.0.tgz#9238e5480dedabacfe1fe3f2771063f164157d74"
   integrity sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==
 
-parallel-signer@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.npmmirror.com/parallel-signer/-/parallel-signer-2.0.1.tgz#91b65b0ae256696d380d7afcb74f12c70de45282"
-  integrity sha512-qHIM/hCFj+glqkE6ZGW0TyjKFJpLoT2qheJIcoTkx72dFbhDOxWbQi4NAyi4b3h5r24Wom5TkGc/Xcp4913JRA==
+parallel-signer@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/parallel-signer/-/parallel-signer-2.0.4.tgz#64b3aa7f9f0d768a38cccc63a4cfc458ef2fe232"
+  integrity sha512-fhrZIMnpEAbkbfyQJi2sR+CA6xqv2cxQ2CR+6HuSmXyu+e2TpC/e4uI0o1RW8/OWUVtiQ0vWyb4710dCWsmikA==
   dependencies:
     ethers "^6.7.0"
 

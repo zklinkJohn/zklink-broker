@@ -25,3 +25,5 @@ export const brokerContracts = {
   // taiko
   167005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
 }
+
+export const supportChains = [5, 97, 43113, 80001, 421613]
