@@ -42,7 +42,7 @@ const createProcessedTxsTableQuery = `
     id SERIAL PRIMARY KEY,
     hash VARCHAR(66) NOT NULL,
     tx jsonb NOT NULL,
-    executed_at TIMESTAMP NOT NULL,
+    executed_at INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 `
