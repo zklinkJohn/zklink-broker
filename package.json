@@ -6,6 +6,7 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
+    "start:broker": "APP_ENV=devnet npx ts-node ./src/broker/server.ts",
     "start:witness": "APP_ENV=devnet npx ts-node ./src/witness/server.ts",
     "db:devnet": "APP_ENV=devnet node ./db_tables.js",
     "db:mainnet": "APP_ENV=mainnet node ./db_tables.js"
