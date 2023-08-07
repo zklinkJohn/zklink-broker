@@ -1,3 +1,4 @@
+import { JsonRpcProvider } from 'ethers'
 import { ParallelSigner } from 'parallel-signer'
 import {
   BROKER_MAXIMUM_PACK_TX_LIMIT,
@@ -17,7 +18,6 @@ import { sleep } from '../utils/sleep'
 import { FastWithdrawTxsResp, groupingRequestParams } from '../utils/withdrawal'
 import { zklinkRpcClient } from './client'
 import { OrderedRequestStore, populateTransaction } from './parallel'
-import { JsonRpcProvider } from 'ethers'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
@@ -87,7 +87,7 @@ export class AssistWithdraw {
   // If not available, initiate scanning using predefined constant timestamps.
   async restoreTimestamp() {
     const r = await selectLatestExecutedTimestamp()
-    if (r.rows[0].executed_at) {
+    if (r.rows[0] && r.rows[0]?.executed_at) {
       this.updateTimestamp(new Date(r.rows[0].executed_at).getTime())
     } else {
       this.updateTimestamp(new Date(BROKER_STARTED_TIME).getTime())
