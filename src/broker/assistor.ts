@@ -1,4 +1,3 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
 import { ParallelSigner } from 'parallel-signer'
 import {
   BROKER_MAXIMUM_PACK_TX_LIMIT,
@@ -18,6 +17,7 @@ import { sleep } from '../utils/sleep'
 import { FastWithdrawTxsResp, groupingRequestParams } from '../utils/withdrawal'
 import { zklinkRpcClient } from './client'
 import { OrderedRequestStore, populateTransaction } from './parallel'
+import { JsonRpcProvider } from 'ethers'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
