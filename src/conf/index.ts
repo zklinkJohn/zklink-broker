@@ -1,10 +1,15 @@
 import dotenv from 'dotenv'
+import { ChainId } from '../types'
 
 dotenv.config({ path: `.env.${process.env.APP_ENV}` })
 dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
 
 export const WITNESS_PORT = Number(process.env.WITNESS_PORT)
 export const BROKER_PORT = Number(process.env.BROKER_PORT)
+
+export const CHAIN_IDS: ChainId[] = process.env
+  .CHAIN_IDS!.split(',')
+  .map((v) => Number(v))
 
 export const TRANSPORT_CONSOLE = true
 
