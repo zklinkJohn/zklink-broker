@@ -145,7 +145,6 @@ export async function signTxs(
       signature: hexlify(sig),
     } as SignTxsReturns)
   } catch (e: any) {
-    console.log(111, e)
     callback(new RPCError(e?.message))
   }
 }
