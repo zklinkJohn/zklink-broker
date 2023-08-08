@@ -4,6 +4,7 @@ import {
   BROKER_MAXIMUM_PACK_TX_LIMIT,
   BROKER_SINGER_PRIVATE_KEY,
   BROKER_STARTED_TIME,
+  CHAIN_IDS,
   POLLING_LOGS_INTERVAL,
   POLLING_LOGS_LIMIT,
 } from '../conf'
@@ -19,7 +20,7 @@ import { OrderedRequestStore, populateTransaction } from './parallel'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
-  private timestamp: number = 0 // start log id of fetch new event logs
+  private timestamp: string = '' // start log id of fetch new event logs
 
   async initSigners(enabledChains: ChainId[]) {
     const layer2Chains = getChains()
@@ -59,27 +60,35 @@ export class AssistWithdraw {
       const { layerOneChainId } = chains.find(
         (v) => Number(v.chainId) === Number(l2ChainId)
       )
+
+      if (CHAIN_IDS.includes(Number(layerOneChainId)) === false) {
+        continue
+      }
       const txs = groupedRequests[l2ChainId].map((v) => {
         return {
           functionData: JSON.stringify(v),
           logId: new Date(v.executedTimestamp).getTime(),
         }
       })
+
       this.signers[layerOneChainId].sendTransactions(txs)
     }
-    const latestTimestamp = Math.max(
-      ...rows.map((v) => new Date(v.executedTimestamp).getTime())
-    )
-    this.updateTimestamp(latestTimestamp)
+
+    const maxRow = rows.reduce((p, c) => {
+      if (
+        new Date(p.executedTimestamp).getTime() >
+        new Date(c.executedTimestamp).getTime()
+      ) {
+        return p
+      } else {
+        return c
+      }
+    }, rows[0])
+
+    this.updateTimestamp(maxRow.executedTimestamp)
   }
 
-  async updateTimestamp(timestamp: number) {
-    timestamp = Number(timestamp)
-    if (Number.isInteger(timestamp) === false) {
-      throw new Error(
-        `update timestamp fail, timestamp is not a integer, timestamp: ${timestamp}`
-      )
-    }
+  async updateTimestamp(timestamp: string) {
     this.timestamp = timestamp
   }
 
@@ -88,18 +97,15 @@ export class AssistWithdraw {
   async restoreTimestamp() {
     const r = await selectLatestExecutedTimestamp()
     if (r) {
-      this.updateTimestamp(new Date(r).getTime())
+      this.updateTimestamp(r)
     } else {
-      this.updateTimestamp(new Date(BROKER_STARTED_TIME).getTime())
+      this.updateTimestamp(BROKER_STARTED_TIME)
     }
   }
 
-  async fetchNewFastWithdrawalTxs(timestamp: number) {
+  async fetchNewFastWithdrawalTxs(timestamp: string) {
     const result = await zklinkRpcClient
-      .request('getFastWithdrawTxs', [
-        new Date(timestamp).toISOString(),
-        POLLING_LOGS_LIMIT,
-      ])
+      .request('getFastWithdrawTxs', [timestamp, POLLING_LOGS_LIMIT])
       .then((r) => r.result)
 
     return result
