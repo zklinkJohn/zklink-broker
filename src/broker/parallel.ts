@@ -243,7 +243,10 @@ export function populateTransaction(chainId: ChainId, mainContract: Address) {
       to: mainContract,
       data: calldata,
       value: BigInt('0'),
-      gasLimit: BigInt(BROKER_TX_GAS_LIMIT) * BigInt(requests.length),
+      gasLimit:
+        chainId === 421613
+          ? undefined
+          : BigInt(BROKER_TX_GAS_LIMIT) * BigInt(requests.length),
       ...fee,
     }
   }
