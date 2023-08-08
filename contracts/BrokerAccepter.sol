@@ -37,6 +37,8 @@ contract BrokerAccepter is
 
   IZkLink public zkLinkInstance;
 
+  event AcceptStatus(bytes data, uint256 amount, bool success);
+
   constructor(
     IZkLink _zkLinkInstance,
     uint48 initialDelay
@@ -80,19 +82,23 @@ contract BrokerAccepter is
     require(bytes4(data) == ACCEPT_ERC20, 'func error erc20');
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
     _checkRole(WITNESS_ROLE, witnessAddress); // if not witness, will revert
-    address(zkLinkInstance).call(data);
+    (bool success, ) = address(zkLinkInstance).call(data);
+    emit AcceptStatus(data, 0, success);
   }
 
   function batchAcceptERC20(
     bytes[] calldata data,
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
+    bool success;
     bytes memory digest = data[0];
-    address(zkLinkInstance).call(data[0]);
+    (success, ) = address(zkLinkInstance).call(data[0]);
+    emit AcceptStatus(digest, 0, success);
     require(bytes4(data[0]) == ACCEPT_ERC20, 'func error erc20');
     for (uint8 i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      address(zkLinkInstance).call(data[i]);
+      (success, ) = address(zkLinkInstance).call(data[i]);
+      emit AcceptStatus(digest, 0, success);
       require(bytes4(data[i]) == ACCEPT_ERC20, 'func error erc20');
     }
     address witnessAddress = ECDSA.recover(keccak256(digest), signature);
@@ -108,7 +114,8 @@ contract BrokerAccepter is
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
     _checkRole(WITNESS_ROLE, witnessAddress); // if not witness, will revert
     //amount * (MAX_ACCEPT_FEE_RATE - withdrawFeeRate) / MAX_ACCEPT_FEE_RATE;
-    address(zkLinkInstance).call{value: amount}(data);
+    (bool success, ) = address(zkLinkInstance).call{value: amount}(data);
+    emit AcceptStatus(data, amount, success);
   }
 
   function batchAcceptETH(
@@ -116,12 +123,16 @@ contract BrokerAccepter is
     uint128[] calldata amounts,
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
+    bool success;
     bytes memory digest = data[0];
-    address(zkLinkInstance).call{value: amounts[0]}(data[0]);
+    (success, ) = address(zkLinkInstance).call{value: amounts[0]}(data[0]);
+    emit AcceptStatus(digest, amounts[0], success);
     require(bytes4(data[0]) == ACCEPT_ETH, 'func error eth');
+
     for (uint i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      address(zkLinkInstance).call{value: amounts[i]}(data[i]);
+      (success, ) = address(zkLinkInstance).call{value: amounts[i]}(data[i]);
+      emit AcceptStatus(digest, amounts[i], success);
       require(bytes4(data[i]) == ACCEPT_ETH, 'func error eth');
     }
     address witnessAddress = ECDSA.recover(keccak256(digest), signature);
@@ -133,13 +144,16 @@ contract BrokerAccepter is
     uint128[] calldata amounts,
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
+    bool success;
     bytes memory digest = data[0];
-    address(zkLinkInstance).call{value: amounts[0]}(data[0]);
+    (success, ) = address(zkLinkInstance).call{value: amounts[0]}(data[0]);
+    emit AcceptStatus(digest, amounts[0], success);
     bytes4 funcSig = bytes4(data[0]);
     require(funcSig == ACCEPT_ETH || funcSig == ACCEPT_ERC20, 'func error eth');
     for (uint i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      address(zkLinkInstance).call{value: amounts[i]}(data[i]);
+      (success, ) = address(zkLinkInstance).call{value: amounts[i]}(data[i]);
+      emit AcceptStatus(digest, amounts[i], success);
       funcSig = bytes4(data[i]);
       require(
         funcSig == ACCEPT_ETH || funcSig == ACCEPT_ERC20,

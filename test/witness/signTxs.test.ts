@@ -138,6 +138,10 @@ describe('witness:signTxs', function () {
       .connect(Alice)
       .batchAccept(datas, amounts, signature)
 
+    for (let i = 0; i < datas.length; i++) {
+      await expect(accTx).to.emit(broker, 'AcceptStatus')
+    }
+
     for (let v of acceptEventArray) {
       await expect(accTx)
         .to.emit(zklink, 'Accept')
