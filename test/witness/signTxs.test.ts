@@ -1,32 +1,19 @@
 import { expect } from 'chai'
-import hre, { artifacts } from 'hardhat'
+import hre from 'hardhat'
 import { BrokerAccepter, MockToken, ZkLink } from '../../typechain-types'
-import { Wallet, ethers, getAddress } from 'ethers'
-import { parseEther, toUtf8Bytes, keccak256, solidityPacked } from 'ethers'
-import { ec as EC } from 'elliptic'
-import { arrayify } from '@ethersproject/bytes'
-import {
-  IOrderedRequestStore,
-  PackedTransaction,
-  Request,
-} from 'parallel-signer'
+import { Wallet, getAddress } from 'ethers'
+import { parseEther } from 'ethers'
+import { Request } from 'parallel-signer'
 const witnessWallet = Wallet.createRandom()
 process.env.WITNESS_SINGER_PRIVATE_KEY = witnessWallet.privateKey
 process.env.ZKLINK_RPC_ENDPOINT = 'https://aws-gw-v2.zk.link'
-import { zklinkRpcClient } from '../../src/witness/client'
 
 import { fetchChains } from '../../src/utils/chains'
 import { SignTxsReturns, signTxs } from '../../src/witness/routers/signTxs'
 import { getFastWithdrawTxs } from '../../src/witness/routers/getFastWithdrawTxs'
-import {
-  __encodeRequestsData,
-  encodeRequestsData,
-} from '../../src/broker/parallel'
+import { __encodeRequestsData } from '../../src/broker/parallel'
 import { Address, TxHash } from '../../src/types'
 
-const BROKER_ROLE = keccak256(toUtf8Bytes('BROKER_ROLE'))
-const WITNESS_ROLE = keccak256(toUtf8Bytes('WITNESS_ROLE'))
-const FUND_ROLE = keccak256(toUtf8Bytes('FUND_ROLE'))
 type AcceptEnentType = {
   from: string
   to: string
@@ -73,7 +60,7 @@ describe('witness:signTxs', function () {
     let acceptEventArray: AcceptEnentType[] = []
     let { signature, result } = (await new Promise((resolve, reject) => {
       getFastWithdrawTxs(
-        ['2023-08-05T02:08:56.491244Z', 20],
+        ['2023-08-05T02:08:56.491244Z', 2],
         async (err, result) => {
           if (err) {
             reject(err)
