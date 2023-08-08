@@ -1,7 +1,7 @@
 import { MethodLike, Server } from 'jayson'
-import { BROKER_PORT } from '../conf'
+import { BROKER_PORT, CHAIN_IDS } from '../conf'
 import { initBlockConfirmations } from '../utils/blockConfirmations'
-import { fetchChains, getChains } from '../utils/chains'
+import { fetchChains } from '../utils/chains'
 import { AssistWithdraw } from './assistor'
 import { getPrice } from './routes'
 
@@ -14,7 +14,7 @@ export async function brokerServer() {
   await initBlockConfirmations()
 
   const assistor = new AssistWithdraw()
-  await assistor.initSigners(getChains())
+  await assistor.initSigners(CHAIN_IDS)
   assistor.watchNewFastWithdrawalTxs()
 
   const rpcServer = new Server(methods)
