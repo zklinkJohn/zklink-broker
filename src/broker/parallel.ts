@@ -66,7 +66,6 @@ export async function encodeRequestsData(
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
   const { signature } = await requestWitnessSignature(txHashs, mainContract)
-  console.log('🚀 ~ file: parallel.ts:68 ~ signature:', signature)
   const datas = []
   const amounts = []
 
