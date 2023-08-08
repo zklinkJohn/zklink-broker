@@ -17,7 +17,7 @@ const createRequestsTableQuery = `
     function_data TEXT NOT NULL,
     tx_id VARCHAR(66) NOT NULL,
     chain_id INTEGER NOT NULL,
-    log_id INTEGER NOT NULL,
+    log_id INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 `
@@ -36,16 +36,6 @@ const createPackedTransactionsTableQuery = `
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 `
-const createProcessedTxsTableQuery = `
-  CREATE TABLE IF NOT EXISTS processed_txs
-  (
-    id SERIAL PRIMARY KEY,
-    hash VARCHAR(66) NOT NULL,
-    tx jsonb NOT NULL,
-    executed_at INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
-`
 
 // Function to initialize the database and tables
 async function initializeDatabase() {
@@ -56,7 +46,6 @@ async function initializeDatabase() {
     // Create the tables
     await client.query(createRequestsTableQuery)
     await client.query(createPackedTransactionsTableQuery)
-    await client.query(createProcessedTxsTableQuery)
 
     console.log('Database and tables created successfully')
   } catch (error) {

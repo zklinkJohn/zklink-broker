@@ -12,11 +12,13 @@ export async function getFastWithdrawTxs(
   try {
     const response = await zklinkRpcClient.request('getFastWithdrawTxs', params)
     if (response.error) {
+      console.log(3, response.error)
       callback(response.error)
     } else {
       callback(null, response.result)
     }
   } catch (e: any) {
+    console.log(2, e)
     callback(e)
   }
 }

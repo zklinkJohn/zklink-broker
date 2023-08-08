@@ -17,10 +17,17 @@ export async function insertProcessedLogs(rows: FastWithdrawTxsResp[]) {
 }
 
 export async function selectLatestExecutedTimestamp() {
-  return await pool.query(`
-    SELECT executed_at AS "executedAt"
-    FROM processed_txs
+  const r = await pool.query(`
+    SELECT function_data AS "functionData"
+    FROM requests
     ORDER BY id DESC
     LIMIT 1;
   `)
+
+  if (r.rows[0] && r.rows[0].functionData) {
+    const data = JSON.parse(r.rows[0].functionData)
+    return data.executedTimestamp
+  } else {
+    return null
+  }
 }

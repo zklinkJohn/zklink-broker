@@ -1,3 +1,4 @@
+import { arrayify } from '@ethersproject/bytes'
 import { ec as EC } from 'elliptic'
 import { hexlify, keccak256, solidityPacked } from 'ethers'
 import { MethodExecuteCallbackType } from 'jayson'
@@ -6,7 +7,6 @@ import { isGasToken } from '../../utils/chains'
 import { encodeAcceptERC20, encodeAcceptETH } from '../../utils/encodeData'
 import { zklinkRpcClient } from '../client'
 import { RPCError } from '../errors'
-import { arrayify } from '@ethersproject/bytes'
 const MAX_ACCEPT_FEE_RATE = BigInt(10000)
 type TxHash = string
 type Address = string
@@ -145,7 +145,8 @@ export async function signTxs(
       signature: hexlify(sig),
     } as SignTxsReturns)
   } catch (e: any) {
-    callback(e)
+    console.log(111, e)
+    callback(new RPCError(e?.message))
   }
 }
 
