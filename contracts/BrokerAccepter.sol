@@ -74,8 +74,8 @@ contract BrokerAccepter is
   }
 
   function acceptERC20(
-    bytes memory data,
-    bytes memory signature
+    bytes calldata data,
+    bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     require(bytes4(data) == ACCEPT_ERC20, 'func error erc20');
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
@@ -84,8 +84,8 @@ contract BrokerAccepter is
   }
 
   function batchAcceptERC20(
-    bytes[] memory data,
-    bytes memory signature
+    bytes[] calldata data,
+    bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bytes memory digest = data[0];
     address(zkLinkInstance).call(data[0]);
@@ -100,9 +100,9 @@ contract BrokerAccepter is
   }
 
   function acceptETH(
-    bytes memory data,
+    bytes calldata data,
     uint128 amount,
-    bytes memory signature
+    bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     require(bytes4(data) == ACCEPT_ETH, 'func error eth');
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
@@ -112,9 +112,9 @@ contract BrokerAccepter is
   }
 
   function batchAcceptETH(
-    bytes[] memory data,
-    uint128[] memory amounts,
-    bytes memory signature
+    bytes[] calldata data,
+    uint128[] calldata amounts,
+    bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bytes memory digest = data[0];
     address(zkLinkInstance).call{value: amounts[0]}(data[0]);
@@ -129,9 +129,9 @@ contract BrokerAccepter is
   }
 
   function batchAccept(
-    bytes[] memory data,
-    uint128[] memory amounts,
-    bytes memory signature
+    bytes[] calldata data,
+    uint128[] calldata amounts,
+    bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bytes memory digest = data[0];
     address(zkLinkInstance).call{value: amounts[0]}(data[0]);
@@ -153,7 +153,7 @@ contract BrokerAccepter is
   // Dynamic call function
   function dynamicCall(
     address payable contractAddress,
-    bytes memory data
+    bytes calldata data
   ) external payable nonReentrant onlyRole(DEFAULT_ADMIN_ROLE) {
     contractAddress.call{value: msg.value}(data);
   }

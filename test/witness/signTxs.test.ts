@@ -1,32 +1,19 @@
 import { expect } from 'chai'
-import hre, { artifacts } from 'hardhat'
+import hre from 'hardhat'
 import { BrokerAccepter, MockToken, ZkLink } from '../../typechain-types'
-import { Wallet, ethers, getAddress } from 'ethers'
-import { parseEther, toUtf8Bytes, keccak256, solidityPacked } from 'ethers'
-import { ec as EC } from 'elliptic'
-import { arrayify } from '@ethersproject/bytes'
-import {
-  IOrderedRequestStore,
-  PackedTransaction,
-  Request,
-} from 'parallel-signer'
+import { Wallet, getAddress } from 'ethers'
+import { parseEther } from 'ethers'
+import { Request } from 'parallel-signer'
 const witnessWallet = Wallet.createRandom()
 process.env.WITNESS_SINGER_PRIVATE_KEY = witnessWallet.privateKey
 process.env.ZKLINK_RPC_ENDPOINT = 'https://aws-gw-v2.zk.link'
-import { zklinkRpcClient } from '../../src/witness/client'
 
 import { fetchChains } from '../../src/utils/chains'
 import { SignTxsReturns, signTxs } from '../../src/witness/routers/signTxs'
 import { getFastWithdrawTxs } from '../../src/witness/routers/getFastWithdrawTxs'
-import {
-  __encodeRequestsData,
-  encodeRequestsData,
-} from '../../src/broker/parallel'
+import { __encodeRequestsData } from '../../src/broker/parallel'
 import { Address, TxHash } from '../../src/types'
 
-const BROKER_ROLE = keccak256(toUtf8Bytes('BROKER_ROLE'))
-const WITNESS_ROLE = keccak256(toUtf8Bytes('WITNESS_ROLE'))
-const FUND_ROLE = keccak256(toUtf8Bytes('FUND_ROLE'))
 type AcceptEnentType = {
   from: string
   to: string
@@ -49,7 +36,7 @@ describe('witness:signTxs', function () {
     tokenAddress = await token.getAddress()
     const transferTx = await token.transfer(
       brokerAddress,
-      parseEther('1000000000000000')
+      parseEther('1000000000000000'),
     )
 
     await fetchChains()
@@ -58,7 +45,7 @@ describe('witness:signTxs', function () {
   it('signTxs should be ok', async function () {
     async function requestWitnessSignature(
       txs: TxHash[],
-      mainContract: Address
+      mainContract: Address,
     ): Promise<SignTxsReturns> {
       return new Promise((resolve, reject) => {
         signTxs([txs, mainContract], (err, sigObj) => {
@@ -73,7 +60,7 @@ describe('witness:signTxs', function () {
     let acceptEventArray: AcceptEnentType[] = []
     let { signature, result } = (await new Promise((resolve, reject) => {
       getFastWithdrawTxs(
-        ['2023-08-05T02:08:56.491244Z', 20],
+        ['2023-08-05T02:08:56.491244Z', 2],
         async (err, result) => {
           if (err) {
             reject(err)
@@ -109,7 +96,7 @@ describe('witness:signTxs', function () {
 
           const signRes = await requestWitnessSignature(txhashs, brokerAddress)
           resolve({ signature: signRes.signature, result })
-        }
+        },
       )
     })) as { signature: string; result: Array<any> }
     const [datas, amounts] = await __encodeRequestsData(
@@ -119,7 +106,7 @@ describe('witness:signTxs', function () {
           chainId: 0,
         } as Request
       }),
-      brokerAddress
+      brokerAddress,
     )
     const [owner, Alice, Bob] = await hre.ethers.getSigners()
 
@@ -128,7 +115,7 @@ describe('witness:signTxs', function () {
     const zkLinkAddress = await zklink.getAddress()
     const approvezklinkTx = await broker.approveZkLink(
       tokenAddress,
-      totalAmount
+      totalAmount,
     )
     await expect(approvezklinkTx)
       .to.emit(token, 'Approval')
@@ -138,7 +125,6 @@ describe('witness:signTxs', function () {
       .connect(Alice)
       .batchAccept(datas, amounts, signature)
 
-    console.log(acceptEventArray)
     for (let v of acceptEventArray) {
       await expect(accTx)
         .to.emit(zklink, 'Accept')
