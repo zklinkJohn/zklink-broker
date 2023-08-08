@@ -36,7 +36,7 @@ describe('witness:signTxs', function () {
     tokenAddress = await token.getAddress()
     const transferTx = await token.transfer(
       brokerAddress,
-      parseEther('1000000000000000')
+      parseEther('1000000000000000'),
     )
 
     await fetchChains()
@@ -45,7 +45,7 @@ describe('witness:signTxs', function () {
   it('signTxs should be ok', async function () {
     async function requestWitnessSignature(
       txs: TxHash[],
-      mainContract: Address
+      mainContract: Address,
     ): Promise<SignTxsReturns> {
       return new Promise((resolve, reject) => {
         signTxs([txs, mainContract], (err, sigObj) => {
@@ -96,7 +96,7 @@ describe('witness:signTxs', function () {
 
           const signRes = await requestWitnessSignature(txhashs, brokerAddress)
           resolve({ signature: signRes.signature, result })
-        }
+        },
       )
     })) as { signature: string; result: Array<any> }
     const [datas, amounts] = await __encodeRequestsData(
@@ -106,7 +106,7 @@ describe('witness:signTxs', function () {
           chainId: 0,
         } as Request
       }),
-      brokerAddress
+      brokerAddress,
     )
     const [owner, Alice, Bob] = await hre.ethers.getSigners()
 
@@ -115,7 +115,7 @@ describe('witness:signTxs', function () {
     const zkLinkAddress = await zklink.getAddress()
     const approvezklinkTx = await broker.approveZkLink(
       tokenAddress,
-      totalAmount
+      totalAmount,
     )
     await expect(approvezklinkTx)
       .to.emit(token, 'Approval')
@@ -125,7 +125,6 @@ describe('witness:signTxs', function () {
       .connect(Alice)
       .batchAccept(datas, amounts, signature)
 
-    console.log(acceptEventArray)
     for (let v of acceptEventArray) {
       await expect(accTx)
         .to.emit(zklink, 'Accept')
