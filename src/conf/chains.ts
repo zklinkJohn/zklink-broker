@@ -3,7 +3,7 @@ export const brokerContracts = {
   // polygon
   80001: '0xfB276631e4Fac83096BA6E54d040c9483b104301',
   // avalanche
-  43113: '0xea7FE217B0fF6E2959b89611F8304B57830c8378',
+  43113: '0xFBaf7414eff5e7bb6E87399F1540A542Cca14300',
   // bsc
   97: '0xe1861608186f930064952c86FcDB7C3088bbC781',
   // goerli
