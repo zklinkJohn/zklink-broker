@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { ChainId } from '../types'
 
-dotenv.config({ path: `.env.${process.env.APP_ENV}` })
+dotenv.config({ path: `.env.${process.env.APP_ENV}`, override: true })
 dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
 
 export const WITNESS_PORT = Number(process.env.WITNESS_PORT)
@@ -28,7 +28,7 @@ export const BROKER_MAXIMUM_PACK_TX_LIMIT = Number(
   process.env.BROKER_MAXIMUM_PACK_TX_LIMIT || 10
 )
 // This number is used to control the maximum number of transactions to be merged.
-export const BROKER_TX_GAS_LIMIT = '100000'
+export const BROKER_TX_GAS_LIMIT = '200000'
 // When the server is first deployed or the database is reset,
 // the server will initiate a scan for new fast withdrawal data at that time.
 // However, if the server is restarted and the 'processed_txs' database table contains at least one record,

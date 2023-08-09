@@ -1,6 +1,6 @@
 const dotenv = require('dotenv')
 
-dotenv.config({ path: `.env.devnet` })
+dotenv.config({ path: `.env.devnet`, override: true })
 dotenv.config({ path: `.env.devnet.local`, override: true })
 
 module.exports = {

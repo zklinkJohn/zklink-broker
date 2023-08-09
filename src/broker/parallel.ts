@@ -66,7 +66,6 @@ export async function encodeRequestsData(
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
   const { signature } = await requestWitnessSignature(txHashs, mainContract)
-  console.log('🚀 ~ file: parallel.ts:68 ~ signature:', signature)
   const datas = []
   const amounts = []
 
@@ -243,7 +242,10 @@ export function populateTransaction(chainId: ChainId, mainContract: Address) {
       to: mainContract,
       data: calldata,
       value: BigInt('0'),
-      gasLimit: BigInt(BROKER_TX_GAS_LIMIT) * BigInt(requests.length),
+      gasLimit:
+        chainId === 421613
+          ? undefined
+          : BigInt(BROKER_TX_GAS_LIMIT) * BigInt(requests.length),
       ...fee,
     }
   }

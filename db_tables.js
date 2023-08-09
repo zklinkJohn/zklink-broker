@@ -1,7 +1,7 @@
 const { Pool } = require('pg')
 const dotenv = require('dotenv')
 
-dotenv.config({ path: `.env.${process.env.APP_ENV}` })
+dotenv.config({ path: `.env.${process.env.APP_ENV}`, override: true })
 dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
 
 // Create a connection pool
