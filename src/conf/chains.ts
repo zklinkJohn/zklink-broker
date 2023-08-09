@@ -3,7 +3,7 @@ export const brokerContracts = {
   // polygon
   80001: '0xfB276631e4Fac83096BA6E54d040c9483b104301',
   // avalanche
-  43113: '0xB26082a0AEf2e0a8E00243BFd28E2bCd33C026B4',
+  43113: '0xea7FE217B0fF6E2959b89611F8304B57830c8378',
   // bsc
   97: '0xe1861608186f930064952c86FcDB7C3088bbC781',
   // goerli
@@ -23,5 +23,5 @@ export const brokerContracts = {
   // manta
   3441005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
   // taiko
-  167005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
+  167005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0'
 }
