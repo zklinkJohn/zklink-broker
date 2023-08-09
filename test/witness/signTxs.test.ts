@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import hre from 'hardhat'
+import hre, { ethers } from 'hardhat'
 import { BrokerAccepter, MockToken, ZkLink } from '../../typechain-types'
 import { Wallet, getAddress } from 'ethers'
 import { parseEther } from 'ethers'
@@ -140,10 +140,15 @@ describe('witness:signTxs', function () {
       }
     }
     expect(acceptStatusLogCount).to.be.eq(datas.length)
+    let appendData
     for (let i = 0; i < datas.length; i++) {
+      appendData =
+        i > 0
+          ? ethers.solidityPacked(['bytes', 'bytes'], [appendData, datas[i]])
+          : datas[i]
       await expect(accTx)
         .to.emit(broker, 'AcceptStatus')
-        .withArgs(datas[i], amounts[i], true, '0x')
+        .withArgs(appendData, amounts[i], true, '0x')
     }
 
     for (let v of acceptEventArray) {
