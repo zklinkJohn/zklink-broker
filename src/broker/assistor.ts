@@ -6,7 +6,7 @@ import {
   BROKER_STARTED_TIME,
   CHAIN_IDS,
   POLLING_LOGS_INTERVAL,
-  POLLING_LOGS_LIMIT,
+  POLLING_LOGS_LIMIT
 } from '../conf'
 import { brokerContracts } from '../conf/chains'
 import { selectLatestExecutedTimestamp } from '../db/process'
@@ -40,13 +40,20 @@ export class AssistWithdraw {
         BROKER_SINGER_PRIVATE_KEY,
         new JsonRpcProvider(web3Url, {
           name: '',
-          chainId: chainId,
+          chainId: chainId
         }),
         new OrderedRequestStore(),
         populateTransaction(chainId, brokerContract),
         {
           requestCountLimit: BROKER_MAXIMUM_PACK_TX_LIMIT,
           confirmations: blockConfirmations[chainId],
+          checkConfirmation: async (txRecpt) => {
+            if (
+              (await txRecpt.confirmations()) >= blockConfirmations[chainId]
+            ) {
+              //TODO
+            }
+          }
         }
       )
       this.signers[chainId].init()
@@ -67,7 +74,7 @@ export class AssistWithdraw {
       const txs = groupedRequests[l2ChainId].map((v) => {
         return {
           functionData: JSON.stringify(v),
-          logId: 0,
+          logId: 0
         }
       })
 

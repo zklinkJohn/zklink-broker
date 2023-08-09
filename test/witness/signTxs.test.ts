@@ -4,9 +4,14 @@ import { BrokerAccepter, MockToken, ZkLink } from '../../typechain-types'
 import { Wallet, getAddress } from 'ethers'
 import { parseEther } from 'ethers'
 import { Request } from 'parallel-signer'
-const witnessWallet = Wallet.createRandom()
-process.env.WITNESS_SINGER_PRIVATE_KEY = witnessWallet.privateKey
-process.env.ZKLINK_RPC_ENDPOINT = 'https://aws-gw-v2.zk.link'
+import dotenv from 'dotenv'
+dotenv.config({ path: `.env.${process.env.APP_ENV}`, override: true })
+dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
+
+if (!process.env.WITNESS_SINGER_PRIVATE_KEY) {
+  process.env.WITNESS_SINGER_PRIVATE_KEY = Wallet.createRandom().privateKey
+}
+const witnessWallet = new Wallet(process.env.WITNESS_SINGER_PRIVATE_KEY)
 
 import { fetchChains } from '../../src/utils/chains'
 import { SignTxsReturns, signTxs } from '../../src/witness/routers/signTxs'
@@ -29,14 +34,14 @@ describe('witness:signTxs', function () {
     zklink = await hre.ethers.deployContract('ZkLink')
     broker = await hre.ethers.deployContract('BrokerAccepter', [
       await zklink.getAddress(),
-      1, //second
+      1 //second
     ])
     brokerAddress = await broker.getAddress()
     token = await hre.ethers.deployContract('MockToken')
     tokenAddress = await token.getAddress()
     const transferTx = await token.transfer(
       brokerAddress,
-      parseEther('1000000000000000'),
+      parseEther('1000000000000000')
     )
 
     await fetchChains()
@@ -45,7 +50,7 @@ describe('witness:signTxs', function () {
   it('signTxs should be ok', async function () {
     async function requestWitnessSignature(
       txs: TxHash[],
-      mainContract: Address,
+      mainContract: Address
     ): Promise<SignTxsReturns> {
       return new Promise((resolve, reject) => {
         signTxs([txs, mainContract], (err, sigObj) => {
@@ -59,54 +64,51 @@ describe('witness:signTxs', function () {
     let totalAmount = BigInt(0)
     let acceptEventArray: AcceptEnentType[] = []
     let { signature, result } = (await new Promise((resolve, reject) => {
-      getFastWithdrawTxs(
-        ['2023-08-05T02:08:56.491244Z', 2],
-        async (err, result) => {
-          if (err) {
-            reject(err)
-          }
-          for (let v of result) {
-            const tx = v.tx
-            const tokenid = tx.l1TargetToken
-            await zklink.setTokenId(tokenid, tokenAddress)
+      getFastWithdrawTxs([1691201336491000, 2], async (err, result) => {
+        if (err) {
+          reject(err)
+        }
+        for (let v of result) {
+          const tx = v.tx
+          const tokenid = tx.l1TargetToken
+          await zklink.setTokenId(tokenid, tokenAddress)
 
-            if (tx.type === 'ForcedExit') {
-              totalAmount += BigInt(tx.exitAmount)
-              acceptEventArray.push({
-                from: brokerAddress,
-                to: tx.target,
-                amount: BigInt(tx.exitAmount),
-              })
-            } else if (tx.type === 'Withdraw') {
-              totalAmount += BigInt(tx.amount)
-              acceptEventArray.push({
-                from: brokerAddress,
-                to: tx.to,
-                amount:
-                  (BigInt(tx.amount) * BigInt(10000 - tx.withdrawFeeRatio)) /
-                  BigInt(10000),
-              })
-            } else {
-              throw new Error('type error')
-            }
+          if (tx.type === 'ForcedExit') {
+            totalAmount += BigInt(tx.exitAmount)
+            acceptEventArray.push({
+              from: brokerAddress,
+              to: tx.target,
+              amount: BigInt(tx.exitAmount)
+            })
+          } else if (tx.type === 'Withdraw') {
+            totalAmount += BigInt(tx.amount)
+            acceptEventArray.push({
+              from: brokerAddress,
+              to: tx.to,
+              amount:
+                (BigInt(tx.amount) * BigInt(10000 - tx.withdrawFeeRatio)) /
+                BigInt(10000)
+            })
+          } else {
+            throw new Error('type error')
           }
-          const txhashs = result.map((v) => {
-            return v.txHash
-          })
+        }
+        const txhashs = result.map((v) => {
+          return v.txHash
+        })
 
-          const signRes = await requestWitnessSignature(txhashs, brokerAddress)
-          resolve({ signature: signRes.signature, result })
-        },
-      )
+        const signRes = await requestWitnessSignature(txhashs, brokerAddress)
+        resolve({ signature: signRes.signature, result })
+      })
     })) as { signature: string; result: Array<any> }
     const [datas, amounts] = await __encodeRequestsData(
       result.map((v) => {
         return {
           functionData: JSON.stringify(v),
-          chainId: 0,
+          chainId: 0
         } as Request
       }),
-      brokerAddress,
+      brokerAddress
     )
     const [owner, Alice, Bob] = await hre.ethers.getSigners()
 
@@ -115,7 +117,7 @@ describe('witness:signTxs', function () {
     const zkLinkAddress = await zklink.getAddress()
     const approvezklinkTx = await broker.approveZkLink(
       tokenAddress,
-      totalAmount,
+      totalAmount
     )
     await expect(approvezklinkTx)
       .to.emit(token, 'Approval')

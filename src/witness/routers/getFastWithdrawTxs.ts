@@ -1,13 +1,13 @@
 import { MethodExecuteCallbackType } from 'jayson'
 import { zklinkRpcClient } from '../client'
 
-type UnixTimeString = string
+type UnixTimeString = number
 type Limit = number
 type GetFastWithdrawTxsParams = [UnixTimeString, Limit]
 
 export async function getFastWithdrawTxs(
   params: GetFastWithdrawTxsParams,
-  callback: MethodExecuteCallbackType
+  callback: MethodExecuteCallbackType,
 ) {
   try {
     const response = await zklinkRpcClient.request('getFastWithdrawTxs', params)
