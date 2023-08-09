@@ -124,9 +124,24 @@ describe('witness:signTxs', function () {
     const accTx = await broker
       .connect(Alice)
       .batchAccept(datas, amounts, signature)
+    const receipt = await accTx.wait()
 
+    let acceptStatusLogCount = 0
+    if (receipt.logs) {
+      for (const log of receipt.logs) {
+        try {
+          const parseLog = broker.interface.parseLog(log)
+          if (parseLog.name === 'AcceptStatus') {
+            acceptStatusLogCount += 1
+          }
+        } catch (error) {}
+      }
+    }
+    expect(acceptStatusLogCount).to.be.eq(datas.length)
     for (let i = 0; i < datas.length; i++) {
-      await expect(accTx).to.emit(broker, 'AcceptStatus')
+      await expect(accTx)
+        .to.emit(broker, 'AcceptStatus')
+        .withArgs(datas[i], amounts[i], true)
     }
 
     for (let v of acceptEventArray) {
