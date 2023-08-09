@@ -3,5 +3,14 @@
   "printWidth": 80,
   "singleQuote": true,
   "jsxBracketSameLine": false,
-  "semi": false
+  "semi": false,
+  "trailingComma": "none",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }

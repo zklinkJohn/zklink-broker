@@ -9,7 +9,9 @@ import { arrayify } from '@ethersproject/bytes'
 const BROKER_ROLE = keccak256(toUtf8Bytes('BROKER_ROLE'))
 const WITNESS_ROLE = keccak256(toUtf8Bytes('WITNESS_ROLE'))
 const FUND_ROLE = keccak256(toUtf8Bytes('FUND_ROLE'))
-
+console.log(`BROKER_ROLE: ${BROKER_ROLE}`)
+console.log(`WITNESS_ROLE: ${WITNESS_ROLE}`)
+console.log(`FUND_ROLE: ${FUND_ROLE}`)
 describe('BrokerAccepter', function () {
   let broker: BrokerAccepter
   let token: MockToken
@@ -19,7 +21,7 @@ describe('BrokerAccepter', function () {
     const zklink = await hre.ethers.deployContract('ZkLink')
     broker = await hre.ethers.deployContract('BrokerAccepter', [
       await zklink.getAddress(),
-      1, //second
+      1 //second
     ])
     brokerAddress = await broker.getAddress()
     token = await hre.ethers.deployContract('MockToken')
@@ -36,7 +38,7 @@ describe('BrokerAccepter', function () {
     const signer = await hre.ethers.provider.getSigner()
     await signer.sendTransaction({
       to: brokerAddress,
-      value: parseEther('0.1'),
+      value: parseEther('0.1')
     })
     expect(await hre.ethers.provider.getBalance(brokerAddress)).to.equal(
       parseEther('0.1')
