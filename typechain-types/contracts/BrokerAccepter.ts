@@ -353,21 +353,9 @@ export interface BrokerAccepterInterface extends Interface {
 }
 
 export namespace AcceptStatusEvent {
-  export type InputTuple = [
-    data: BytesLike,
-    amount: BigNumberish,
-    success: boolean,
-    errorInfo: BytesLike
-  ];
-  export type OutputTuple = [
-    data: string,
-    amount: bigint,
-    success: boolean,
-    errorInfo: string
-  ];
+  export type InputTuple = [success: boolean, errorInfo: BytesLike];
+  export type OutputTuple = [success: boolean, errorInfo: string];
   export interface OutputObject {
-    data: string;
-    amount: bigint;
     success: boolean;
     errorInfo: string;
   }
@@ -931,7 +919,7 @@ export interface BrokerAccepter extends BaseContract {
   >;
 
   filters: {
-    "AcceptStatus(bytes,uint256,bool,bytes)": TypedContractEvent<
+    "AcceptStatus(bool,bytes)": TypedContractEvent<
       AcceptStatusEvent.InputTuple,
       AcceptStatusEvent.OutputTuple,
       AcceptStatusEvent.OutputObject

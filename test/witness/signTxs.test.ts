@@ -140,15 +140,8 @@ describe('witness:signTxs', function () {
       }
     }
     expect(acceptStatusLogCount).to.be.eq(datas.length)
-    let appendData
     for (let i = 0; i < datas.length; i++) {
-      appendData =
-        i > 0
-          ? ethers.solidityPacked(['bytes', 'bytes'], [appendData, datas[i]])
-          : datas[i]
-      await expect(accTx)
-        .to.emit(broker, 'AcceptStatus')
-        .withArgs(appendData, amounts[i], true, '0x')
+      await expect(accTx).to.emit(broker, 'AcceptStatus').withArgs(true, '0x')
     }
 
     for (let v of acceptEventArray) {
