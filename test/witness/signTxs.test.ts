@@ -141,7 +141,7 @@ describe('witness:signTxs', function () {
     for (let i = 0; i < datas.length; i++) {
       await expect(accTx)
         .to.emit(broker, 'AcceptStatus')
-        .withArgs(datas[i], amounts[i], true)
+        .withArgs(datas[i], amounts[i], true, '0x')
     }
 
     for (let v of acceptEventArray) {

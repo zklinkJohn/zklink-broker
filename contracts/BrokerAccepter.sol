@@ -37,7 +37,7 @@ contract BrokerAccepter is
 
   IZkLink public zkLinkInstance;
 
-  event AcceptStatus(bytes data, uint256 amount, bool success);
+  event AcceptStatus(bytes data, uint256 amount, bool success, bytes errorInfo);
 
   constructor(
     IZkLink _zkLinkInstance,
@@ -82,8 +82,8 @@ contract BrokerAccepter is
     require(bytes4(data) == ACCEPT_ERC20, 'func error erc20');
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
     _checkRole(WITNESS_ROLE, witnessAddress); // if not witness, will revert
-    (bool success, ) = address(zkLinkInstance).call(data);
-    emit AcceptStatus(data, 0, success);
+    (bool success, bytes memory errorInfo) = address(zkLinkInstance).call(data);
+    emit AcceptStatus(data, 0, success, errorInfo);
   }
 
   function batchAcceptERC20(
@@ -91,14 +91,15 @@ contract BrokerAccepter is
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bool success;
+    bytes memory errorInfo;
     bytes memory digest = data[0];
-    (success, ) = address(zkLinkInstance).call(data[0]);
-    emit AcceptStatus(digest, 0, success);
+    (success, errorInfo) = address(zkLinkInstance).call(data[0]);
+    emit AcceptStatus(digest, 0, success, errorInfo);
     require(bytes4(data[0]) == ACCEPT_ERC20, 'func error erc20');
     for (uint8 i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      (success, ) = address(zkLinkInstance).call(data[i]);
-      emit AcceptStatus(digest, 0, success);
+      (success, errorInfo) = address(zkLinkInstance).call(data[i]);
+      emit AcceptStatus(digest, 0, success, errorInfo);
       require(bytes4(data[i]) == ACCEPT_ERC20, 'func error erc20');
     }
     address witnessAddress = ECDSA.recover(keccak256(digest), signature);
@@ -114,8 +115,10 @@ contract BrokerAccepter is
     address witnessAddress = ECDSA.recover(keccak256(data), signature);
     _checkRole(WITNESS_ROLE, witnessAddress); // if not witness, will revert
     //amount * (MAX_ACCEPT_FEE_RATE - withdrawFeeRate) / MAX_ACCEPT_FEE_RATE;
-    (bool success, ) = address(zkLinkInstance).call{value: amount}(data);
-    emit AcceptStatus(data, amount, success);
+    (bool success, bytes memory errorInfo) = address(zkLinkInstance).call{
+      value: amount
+    }(data);
+    emit AcceptStatus(data, amount, success, errorInfo);
   }
 
   function batchAcceptETH(
@@ -124,15 +127,20 @@ contract BrokerAccepter is
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bool success;
+    bytes memory errorInfo;
     bytes memory digest = data[0];
-    (success, ) = address(zkLinkInstance).call{value: amounts[0]}(data[0]);
-    emit AcceptStatus(digest, amounts[0], success);
+    (success, errorInfo) = address(zkLinkInstance).call{value: amounts[0]}(
+      data[0]
+    );
+    emit AcceptStatus(digest, amounts[0], success, errorInfo);
     require(bytes4(data[0]) == ACCEPT_ETH, 'func error eth');
 
     for (uint i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      (success, ) = address(zkLinkInstance).call{value: amounts[i]}(data[i]);
-      emit AcceptStatus(digest, amounts[i], success);
+      (success, errorInfo) = address(zkLinkInstance).call{value: amounts[i]}(
+        data[i]
+      );
+      emit AcceptStatus(digest, amounts[i], success, errorInfo);
       require(bytes4(data[i]) == ACCEPT_ETH, 'func error eth');
     }
     address witnessAddress = ECDSA.recover(keccak256(digest), signature);
@@ -145,15 +153,20 @@ contract BrokerAccepter is
     bytes calldata signature
   ) external onlyRole(BROKER_ROLE) {
     bool success;
+    bytes memory errorInfo;
     bytes memory digest = data[0];
-    (success, ) = address(zkLinkInstance).call{value: amounts[0]}(data[0]);
-    emit AcceptStatus(digest, amounts[0], success);
+    (success, errorInfo) = address(zkLinkInstance).call{value: amounts[0]}(
+      data[0]
+    );
+    emit AcceptStatus(digest, amounts[0], success, errorInfo);
     bytes4 funcSig = bytes4(data[0]);
     require(funcSig == ACCEPT_ETH || funcSig == ACCEPT_ERC20, 'func error eth');
     for (uint i = 1; i < data.length; i++) {
       digest = abi.encodePacked(digest, data[i]);
-      (success, ) = address(zkLinkInstance).call{value: amounts[i]}(data[i]);
-      emit AcceptStatus(digest, amounts[i], success);
+      (success, errorInfo) = address(zkLinkInstance).call{value: amounts[i]}(
+        data[i]
+      );
+      emit AcceptStatus(digest, amounts[i], success, errorInfo);
       funcSig = bytes4(data[i]);
       require(
         funcSig == ACCEPT_ETH || funcSig == ACCEPT_ERC20,
