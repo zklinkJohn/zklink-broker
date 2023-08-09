@@ -745,9 +745,9 @@
   resolved "https://registry.npmmirror.com/@nomicfoundation/hardhat-toolbox/-/hardhat-toolbox-3.0.0.tgz#83e2c28a745aa4eb1236072166367b0de68b4c76"
   integrity sha512-MsteDXd0UagMksqm9KvcFG6gNKYNa3GGNCy73iQ6bEasEgg2v8Qjl6XA5hjs8o5UD5A3153B6W2BIVJ8SxYUtA==
 
-"@nomicfoundation/hardhat-verify@^1.0.0":
+"@nomicfoundation/hardhat-verify@^1.1.0":
   version "1.1.0"
-  resolved "https://registry.npmmirror.com/@nomicfoundation/hardhat-verify/-/hardhat-verify-1.1.0.tgz#36c7f78adebd641d641ab5dd4660111520bb3055"
+  resolved "https://registry.yarnpkg.com/@nomicfoundation/hardhat-verify/-/hardhat-verify-1.1.0.tgz#36c7f78adebd641d641ab5dd4660111520bb3055"
   integrity sha512-mXHP17gz4wDsWiXIz8fBRE/8T2KJglWE/QGk5A6nwsubyeqWgjqimfbwTLyaPESphKvis3hX6G75QP5a9Cd8cQ==
   dependencies:
     "@ethersproject/abi" "^5.1.2"
