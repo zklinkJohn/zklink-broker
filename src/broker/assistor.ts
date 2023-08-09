@@ -6,7 +6,7 @@ import {
   BROKER_STARTED_TIME,
   CHAIN_IDS,
   POLLING_LOGS_INTERVAL,
-  POLLING_LOGS_LIMIT,
+  POLLING_LOGS_LIMIT
 } from '../conf'
 import { brokerContracts } from '../conf/chains'
 import { selectLatestExecutedTimestamp } from '../db/process'
@@ -20,7 +20,7 @@ import { OrderedRequestStore, populateTransaction } from './parallel'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
-  private timestamp: string = '' // start log id of fetch new event logs
+  private timestamp: number = BROKER_STARTED_TIME // start log id of fetch new event logs
 
   async initSigners(enabledChains: ChainId[]) {
     const layer2Chains = getChains()
@@ -40,13 +40,20 @@ export class AssistWithdraw {
         BROKER_SINGER_PRIVATE_KEY,
         new JsonRpcProvider(web3Url, {
           name: '',
-          chainId: chainId,
+          chainId: chainId
         }),
         new OrderedRequestStore(),
         populateTransaction(chainId, brokerContract),
         {
           requestCountLimit: BROKER_MAXIMUM_PACK_TX_LIMIT,
           confirmations: blockConfirmations[chainId],
+          checkConfirmation: async (txRecpt) => {
+            if (
+              (await txRecpt.confirmations()) >= blockConfirmations[chainId]
+            ) {
+              //TODO
+            }
+          }
         }
       )
       this.signers[chainId].init()
@@ -67,28 +74,19 @@ export class AssistWithdraw {
       const txs = groupedRequests[l2ChainId].map((v) => {
         return {
           functionData: JSON.stringify(v),
-          logId: new Date(v.executedTimestamp).getTime(),
+          logId: 0
         }
       })
 
       this.signers[layerOneChainId].sendTransactions(txs)
     }
 
-    const maxRow = rows.reduce((p, c) => {
-      if (
-        new Date(p.executedTimestamp).getTime() >
-        new Date(c.executedTimestamp).getTime()
-      ) {
-        return p
-      } else {
-        return c
-      }
-    }, rows[0])
+    const maxTimestamp = Math.max(...rows.map((v) => v.executedTimestamp))
 
-    this.updateTimestamp(maxRow.executedTimestamp)
+    this.updateTimestamp(maxTimestamp)
   }
 
-  async updateTimestamp(timestamp: string) {
+  async updateTimestamp(timestamp: number) {
     this.timestamp = timestamp
   }
 
@@ -103,7 +101,7 @@ export class AssistWithdraw {
     }
   }
 
-  async fetchNewFastWithdrawalTxs(timestamp: string) {
+  async fetchNewFastWithdrawalTxs(timestamp: number) {
     const result = await zklinkRpcClient
       .request('getFastWithdrawTxs', [timestamp, POLLING_LOGS_LIMIT])
       .then((r) => r.result)
