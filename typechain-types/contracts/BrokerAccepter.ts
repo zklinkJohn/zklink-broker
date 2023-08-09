@@ -69,6 +69,7 @@ export interface BrokerAccepterInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "AcceptStatus"
+      | "CallStatus"
       | "DefaultAdminDelayChangeCanceled"
       | "DefaultAdminDelayChangeScheduled"
       | "DefaultAdminTransferCanceled"
@@ -353,6 +354,19 @@ export interface BrokerAccepterInterface extends Interface {
 }
 
 export namespace AcceptStatusEvent {
+  export type InputTuple = [success: boolean, errorInfo: BytesLike];
+  export type OutputTuple = [success: boolean, errorInfo: string];
+  export interface OutputObject {
+    success: boolean;
+    errorInfo: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace CallStatusEvent {
   export type InputTuple = [success: boolean, errorInfo: BytesLike];
   export type OutputTuple = [success: boolean, errorInfo: string];
   export interface OutputObject {
@@ -869,6 +883,13 @@ export interface BrokerAccepter extends BaseContract {
     AcceptStatusEvent.OutputObject
   >;
   getEvent(
+    key: "CallStatus"
+  ): TypedContractEvent<
+    CallStatusEvent.InputTuple,
+    CallStatusEvent.OutputTuple,
+    CallStatusEvent.OutputObject
+  >;
+  getEvent(
     key: "DefaultAdminDelayChangeCanceled"
   ): TypedContractEvent<
     DefaultAdminDelayChangeCanceledEvent.InputTuple,
@@ -928,6 +949,17 @@ export interface BrokerAccepter extends BaseContract {
       AcceptStatusEvent.InputTuple,
       AcceptStatusEvent.OutputTuple,
       AcceptStatusEvent.OutputObject
+    >;
+
+    "CallStatus(bool,bytes)": TypedContractEvent<
+      CallStatusEvent.InputTuple,
+      CallStatusEvent.OutputTuple,
+      CallStatusEvent.OutputObject
+    >;
+    CallStatus: TypedContractEvent<
+      CallStatusEvent.InputTuple,
+      CallStatusEvent.OutputTuple,
+      CallStatusEvent.OutputObject
     >;
 
     "DefaultAdminDelayChangeCanceled()": TypedContractEvent<
