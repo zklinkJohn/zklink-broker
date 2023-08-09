@@ -38,6 +38,7 @@ contract BrokerAccepter is
   IZkLink public zkLinkInstance;
 
   event AcceptStatus(bool success, bytes errorInfo);
+  event CallStatus(bool success, bytes errorInfo);
 
   constructor(
     IZkLink _zkLinkInstance,
@@ -182,7 +183,10 @@ contract BrokerAccepter is
     address payable contractAddress,
     bytes calldata data
   ) external payable nonReentrant onlyRole(DEFAULT_ADMIN_ROLE) {
-    contractAddress.call{value: msg.value}(data);
+    (bool success, bytes memory errorInfo) = contractAddress.call{
+      value: msg.value
+    }(data);
+    emit CallStatus(success, errorInfo);
   }
 
   function withdraw(
