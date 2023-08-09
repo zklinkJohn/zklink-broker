@@ -2,21 +2,21 @@ import { arrayify } from '@ethersproject/bytes'
 import {
   IOrderedRequestStore,
   PackedTransaction,
-  Request,
+  Request
 } from 'parallel-signer'
-import { BROKER_FEE_POLICY, BROKER_TX_GAS_LIMIT } from '../conf'
+import { BROKER_FEE_POLICY } from '../conf'
 import { pool } from '../db'
 import { Address, ChainId, TxHash, Wei } from '../types'
 import { fetchAccount, isGasToken } from '../utils/chains'
 import {
   encodeAcceptERC20,
   encodeAcceptETH,
-  encodeBatchAccept,
+  encodeBatchAccept
 } from '../utils/encodeData'
 import {
   FastWithdrawRow,
   FastWithdrawTxsResp,
-  ForcedExitRow,
+  ForcedExitRow
 } from '../utils/withdrawal'
 import { SignTxsReturns } from '../witness/routers/signTxs'
 import { watcherServerClient, witnessRpcClient } from './client'
@@ -24,7 +24,7 @@ import { watcherServerClient, witnessRpcClient } from './client'
 const MAX_ACCEPT_FEE_RATE = BigInt(10000)
 async function fetchFeeData(chainId: number) {
   const response = await watcherServerClient.request('watcher_getFeeData', [
-    chainId,
+    chainId
   ])
   if (response.error) {
     console.log(1, response.error)
@@ -40,7 +40,7 @@ async function requestWitnessSignature(
 ): Promise<SignTxsReturns> {
   const response = await witnessRpcClient.request('signTxs', [
     txs,
-    mainContract,
+    mainContract
   ])
   if (response.error) {
     console.log(2, response.error)
@@ -61,7 +61,7 @@ export async function encodeRequestsData(
   const objRequests: RequestObject[] = requests.map((v) => {
     return {
       ...v,
-      functionData: JSON.parse(v.functionData),
+      functionData: JSON.parse(v.functionData)
     }
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
@@ -100,7 +100,7 @@ export async function __encodeRequestsData(
   const objRequests: RequestObject[] = requests.map((v) => {
     return {
       ...v,
-      functionData: JSON.parse(v.functionData),
+      functionData: JSON.parse(v.functionData)
     }
   })
 
@@ -146,7 +146,7 @@ async function buildForcedExitFromTx(
         0, //withdrawFeeRatio
         tx.initiatorAccountId,
         tx.initiatorSubAccountId,
-        tx.initiatorNonce,
+        tx.initiatorNonce
       ])
     : encodeAcceptERC20([
         mainContract,
@@ -158,7 +158,7 @@ async function buildForcedExitFromTx(
         tx.initiatorAccountId,
         tx.initiatorSubAccountId,
         tx.initiatorNonce,
-        amount,
+        amount
       ])
 
   const a = isGasToken(tx.l1TargetToken) ? amount : BigInt(0)
@@ -180,7 +180,7 @@ async function buildFastWithdrawFromTx(
         tx.withdrawFeeRatio,
         tx.accountId,
         tx.subAccountId,
-        tx.nonce,
+        tx.nonce
       ])
     : encodeAcceptERC20([
         mainContract,
@@ -193,7 +193,7 @@ async function buildFastWithdrawFromTx(
         tx.subAccountId,
         tx.nonce,
         (amount * (MAX_ACCEPT_FEE_RATE - BigInt(tx.withdrawFeeRatio))) /
-          MAX_ACCEPT_FEE_RATE,
+          MAX_ACCEPT_FEE_RATE
       ])
   const a = isGasToken(tx.l1TargetToken)
     ? (amount * (MAX_ACCEPT_FEE_RATE - BigInt(tx.withdrawFeeRatio))) /
@@ -242,11 +242,8 @@ export function populateTransaction(chainId: ChainId, mainContract: Address) {
       to: mainContract,
       data: calldata,
       value: BigInt('0'),
-      gasLimit:
-        chainId === 421613
-          ? undefined
-          : BigInt(BROKER_TX_GAS_LIMIT) * BigInt(requests.length),
-      ...fee,
+      gasLimit: undefined,
+      ...fee
     }
   }
 }
@@ -316,7 +313,7 @@ export class OrderedRequestStore implements IOrderedRequestStore {
         SELECT
           *
         FROM packed_transactions
-        WHERE`,
+        WHERE`
     ]
     if (!chainId) {
       throw new Error('Missing chainId in getLatestPackedTransaction')
@@ -409,7 +406,7 @@ function buildRequest(obj: {
     functionData: obj.function_data,
     txId: obj.tx_id,
     chainId: obj.chain_id,
-    createdAt: new Date(obj.created_at).getTime(),
+    createdAt: new Date(obj.created_at).getTime()
   } as Request
 }
 
@@ -436,6 +433,6 @@ function buildPackedTransaction(obj: {
     gasPrice: obj.gas_price,
     requestIds: obj.request_ids.split(',').map(Number),
     confirmation: obj.confirmation,
-    createdAt: new Date(obj.created_at).getTime(),
+    createdAt: new Date(obj.created_at).getTime()
   } as PackedTransaction
 }
