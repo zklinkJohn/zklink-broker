@@ -1,6 +1,6 @@
+import { arrayify } from '@ethersproject/bytes'
 import { dataSlice } from 'ethers'
 import { Address, ChainId, HexString, L2ChainId } from '../types'
-import { arrayify } from '@ethersproject/bytes'
 export type FastWithdrawTxsResp = ForcedExitRow | FastWithdrawRow
 
 export interface ForcedExitRow {
@@ -22,7 +22,7 @@ export interface ForcedExitRow {
     }
     ts: number
   }
-  executedTimestamp: string
+  executedTimestamp: number
 }
 
 export interface FastWithdrawRow {
@@ -46,7 +46,7 @@ export interface FastWithdrawRow {
     withdrawFeeRatio: number
     ts: number
   }
-  executedTimestamp: string
+  executedTimestamp: number
 }
 
 export interface WithdrawalEventParams {

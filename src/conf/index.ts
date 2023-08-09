@@ -33,7 +33,7 @@ export const BROKER_TX_GAS_LIMIT = '200000'
 // the server will initiate a scan for new fast withdrawal data at that time.
 // However, if the server is restarted and the 'processed_txs' database table contains at least one record,
 // the server will utilize the most recent entry in the 'processed_txs' table to proceed.
-export const BROKER_STARTED_TIME = process.env.BROKER_STARTED_TIME
+export const BROKER_STARTED_TIME = Number(process.env.BROKER_STARTED_TIME)
 
 export const WATCHER_SERVER_HOST = process.env.WATCHER_SERVER_HOST
 export const WATCHER_SERVER_PORT = process.env.WATCHER_SERVER_PORT
