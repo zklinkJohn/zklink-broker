@@ -68,6 +68,7 @@ export interface BrokerAccepterInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "AcceptStatus"
       | "DefaultAdminDelayChangeCanceled"
       | "DefaultAdminDelayChangeScheduled"
       | "DefaultAdminTransferCanceled"
@@ -349,6 +350,31 @@ export interface BrokerAccepterInterface extends Interface {
     functionFragment: "zkLinkInstance",
     data: BytesLike
   ): Result;
+}
+
+export namespace AcceptStatusEvent {
+  export type InputTuple = [
+    data: BytesLike,
+    amount: BigNumberish,
+    success: boolean,
+    errorInfo: BytesLike
+  ];
+  export type OutputTuple = [
+    data: string,
+    amount: bigint,
+    success: boolean,
+    errorInfo: string
+  ];
+  export interface OutputObject {
+    data: string;
+    amount: bigint;
+    success: boolean;
+    errorInfo: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace DefaultAdminDelayChangeCanceledEvent {
@@ -848,6 +874,13 @@ export interface BrokerAccepter extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
 
   getEvent(
+    key: "AcceptStatus"
+  ): TypedContractEvent<
+    AcceptStatusEvent.InputTuple,
+    AcceptStatusEvent.OutputTuple,
+    AcceptStatusEvent.OutputObject
+  >;
+  getEvent(
     key: "DefaultAdminDelayChangeCanceled"
   ): TypedContractEvent<
     DefaultAdminDelayChangeCanceledEvent.InputTuple,
@@ -898,6 +931,17 @@ export interface BrokerAccepter extends BaseContract {
   >;
 
   filters: {
+    "AcceptStatus(bytes,uint256,bool,bytes)": TypedContractEvent<
+      AcceptStatusEvent.InputTuple,
+      AcceptStatusEvent.OutputTuple,
+      AcceptStatusEvent.OutputObject
+    >;
+    AcceptStatus: TypedContractEvent<
+      AcceptStatusEvent.InputTuple,
+      AcceptStatusEvent.OutputTuple,
+      AcceptStatusEvent.OutputObject
+    >;
+
     "DefaultAdminDelayChangeCanceled()": TypedContractEvent<
       DefaultAdminDelayChangeCanceledEvent.InputTuple,
       DefaultAdminDelayChangeCanceledEvent.OutputTuple,
