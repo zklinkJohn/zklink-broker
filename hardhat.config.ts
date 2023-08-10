@@ -4,6 +4,7 @@ dotenv.config({})
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomicfoundation/hardhat-verify'
 import { HardhatUserConfig } from 'hardhat/config'
+import "hardhat-deploy"
 
 import testNetwork from './testnet.config'
 
@@ -34,6 +35,9 @@ const config: HardhatUserConfig = {
         }
       }
     ]
+  },
+  namedAccounts: {
+    deployer: "0x362403032De25d11F3DbC357e89e3C3713eFd6A7"
   },
   networks: testNetwork,
   etherscan: {
