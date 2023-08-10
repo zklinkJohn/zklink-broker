@@ -1,8 +1,15 @@
 import dotenv from 'dotenv'
-dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
+dotenv.config({})
+
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomicfoundation/hardhat-verify'
 import { HardhatUserConfig } from 'hardhat/config'
+
+import testNetwork from './testnet.config'
+
+// function getAccounts(): Array<string> {
+//   return process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : ['']
+// }
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -28,16 +35,7 @@ const config: HardhatUserConfig = {
       }
     ]
   },
-  networks: {
-    hardhat: {
-      allowUnlimitedContractSize: true
-    },
-    'avax-testnet': {
-      url: 'https://rpc.ankr.com/avalanche_fuji',
-      chainId: 43113,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : ['']
-    }
-  },
+  networks: testNetwork,
   etherscan: {
     apiKey: process.env.ETHERSCAN
   }
