@@ -8,7 +8,7 @@ export default {
     chainId: 43113,
     accounts: getAccounts()
   },
-  'testnet-polygon': {
+  'polygon-testnet': {
     url: 'https://rpc.ankr.com/polygon_mumbai',
     chainId: 80001,
     accounts: getAccounts()
@@ -23,28 +23,28 @@ export default {
     chainId: 5,
     accounts: getAccounts()
   },
-  'zksync-era': {
+  'zksync-era-testnet': {
     url: 'https://testnet.era.zksync.dev',
     chainId: 280,
     accounts: getAccounts()
   },
-  linea: {
+  'linea-testnet': {
     url: 'https://rpc.goerli.linea.build',
     chainId: 59140,
     accounts: getAccounts()
   },
-  'arbitrum-goerli': {
+  'arbitrum-testnet': {
     url: 'https://arbitrum-goerli.publicnode.com',
     chainId: 421613,
     accounts: getAccounts()
   },
-  'optimism-goerli-testnet': {
+  'optimism-testnet': {
     url: 'https://optimism-goerli.publicnode.com',
     chainId: 420,
     accounts: getAccounts()
   },
-  'base-goerli': {
-    url: 'https://1rpc.io/base-goerli',
+  'base-testnet': {
+    url: 'https://base-goerli.public.blastapi.io',
     chainId: 84531,
     accounts: getAccounts()
   },
@@ -53,7 +53,7 @@ export default {
     chainId: 5001,
     accounts: getAccounts()
   },
-  'manta-pacific-testnet': {
+  'manta-testnet': {
     url: 'https://manta-testnet.calderachain.xyz/http',
     chainId: 3441005,
     accounts: getAccounts()

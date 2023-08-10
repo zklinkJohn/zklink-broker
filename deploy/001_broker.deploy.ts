@@ -1,17 +1,25 @@
 import { DeployFunction } from 'hardhat-deploy/types'
+import chains from '../config/chains'
 
-const func: DeployFunction = async function (hre) {
-  const {
-    deployments,
-    getNamedAccounts,
-  } = hre
+const func: DeployFunction = async function ({
+  deployments,
+  getNamedAccounts,
+  getChainId
+}) {
   const { deploy } = deployments
-  const {deployer} = await getNamedAccounts()
-  await deploy('BrokerAccept', {
-    from: deployer,
-    args: ['0xb2743f7c65c544cefb7ac909787ae226f0dc8363', 100],
-    log: true
-  })
+  const { deployer } = await getNamedAccounts()
+  const chainId = await getChainId()
+  const filters = chains.filter(
+    (chain) => chain.layerOneChainId === Number(chainId)
+  )
+  if (filters.length > 0) {
+    const chainInfo = filters[0]
+    await deploy('BrokerAccepter', {
+      from: deployer,
+      args: [chainInfo.mainContract, 100],
+      log: true
+    })
+  }
 }
 
 func.tags = ['Broker']

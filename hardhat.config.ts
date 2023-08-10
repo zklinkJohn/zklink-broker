@@ -8,10 +8,6 @@ import "hardhat-deploy"
 
 import testNetwork from './testnet.config'
 
-// function getAccounts(): Array<string> {
-//   return process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : ['']
-// }
-
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
