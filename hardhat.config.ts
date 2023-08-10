@@ -4,7 +4,7 @@ dotenv.config({})
 import '@nomicfoundation/hardhat-toolbox'
 import '@nomicfoundation/hardhat-verify'
 import { HardhatUserConfig } from 'hardhat/config'
-import "hardhat-deploy"
+import 'hardhat-deploy'
 
 import testNetwork from './testnet.config'
 
@@ -33,11 +33,19 @@ const config: HardhatUserConfig = {
     ]
   },
   namedAccounts: {
-    deployer: "0x362403032De25d11F3DbC357e89e3C3713eFd6A7"
+    deployer: process.env.DEVELOPER
   },
   networks: testNetwork,
   etherscan: {
-    apiKey: process.env.ETHERSCAN
+    apiKey: {
+      mainnet: process.env.ETHERSCAN,
+      goerli: process.env.ETHERSCAN,
+      avalancheFujiTestnet: process.env.ETHERSCAN_AVAX,
+      polygonMumbai: process.env.ETHERSCAN_POLYGON,
+      arbitrumGoerli: process.env.ETHERSCAN_ARB,
+      baseGoerli: process.env.ETHERSCAN_BASE,
+      bscTestnet: process.env.ETHERSCAN_BSC
+    }
   }
 }
 
