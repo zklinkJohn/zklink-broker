@@ -39,7 +39,7 @@ export default {
     accounts: getAccounts()
   },
   'optimism-testnet': {
-    url: 'https://optimism-goerli.publicnode.com',
+    url: 'https://optimism-goerli.public.blastapi.io',
     chainId: 420,
     accounts: getAccounts()
   },
@@ -56,6 +56,11 @@ export default {
   'manta-testnet': {
     url: 'https://manta-testnet.calderachain.xyz/http',
     chainId: 3441005,
+    accounts: getAccounts()
+  },
+  'taiko-testnet': {
+    url: 'https://rpc.test.taiko.xyz',
+    chainId: 167005,
     accounts: getAccounts()
   }
 }
