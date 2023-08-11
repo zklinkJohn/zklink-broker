@@ -1,27 +1,27 @@
 export const brokerContracts = {
   // ======== Testnet
-  // polygon
-  80001: '0xfB276631e4Fac83096BA6E54d040c9483b104301',
-  // avalanche
-  43113: '0xFBaf7414eff5e7bb6E87399F1540A542Cca14300',
-  // bsc
-  97: '0xe1861608186f930064952c86FcDB7C3088bbC781',
-  // goerli
-  5: '0x8c134d0B17B5add9282AfC35b57b36d661b60200',
-  // zksync
-  280: '0x3Ba6eC8C99B1ce36005f2d64197C19071aba8C5D',
-  // linea
-  59140: '0xeA5cfb3eC74c8A3dfcA7815534c975DD18D553Dc',
-  // arbitrum
-  421613: '0x59Fb4b642760308843C979146fAEA73277457424',
-  // optimism
-  420: '0x733aDFA13EDfA308C728423Cc8AF8F4E1cCF02a7',
-  // base
-  84531: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
-  // mantle
-  5001: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
-  // manta
-  3441005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0',
-  // taiko
-  167005: '0xA7A9B56E61AdD9BfE89a9ceAa222A0Fba0Be2Bb0'
+  // polygon testnet
+  80001: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // avalanche testnet
+  43113: '0x650844B44628bA2b11e88A71772d5FE4512E0463',
+  // bsc testnet
+  97: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // goerli testnet
+  5: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // zksync testnet
+  280: '0x4B75b37d97Af27e08345aB12725e53a8C3103970',
+  // linea testnet
+  59140: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // arbitrum testnet
+  421613: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // optimism testnet
+  420: '0xbca5ee50b8f2679aa7281fd48817679b82d1c4df',
+  // base testnet
+  84531: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // mantle testnet
+  5001: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // manta testnet
+  3441005: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
+  // taiko testnet
+  167005: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35'
 }
