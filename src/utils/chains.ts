@@ -27,16 +27,18 @@ export interface AccountInfoResp {
   pubKeyHash: string
 }
 let chains: ChainInfo[] = []
-
+const layer1ToLayer2: { [layerOneChainId: string]: L2ChainId } = {}
 export async function fetchChains(): Promise<ChainInfo[]> {
   const response = await zklinkRpcClient.request('getSupportChains', [])
 
   if (response.error) {
     return Promise.reject(response.error)
-  } else {
-    chains = response.result
-    return chains
   }
+  chains = response.result
+  for (let chainInfo of chains) {
+    layer1ToLayer2[chainInfo.layerOneChainId] = chainInfo.chainId
+  }
+  return chains
 }
 
 //only for test
@@ -55,7 +57,7 @@ export async function fetchTokens() {
 
 export function getTokenDecimals(chainId: ChainId, tokenId: TokenId): number {
   const tokenInfo: TokenInfo = tokenInfoMap[tokenId.toString()]
-  const tokenChainInfo = tokenInfo.chains[chainId.toString()]
+  const tokenChainInfo = tokenInfo.chains[layer1ToLayer2[chainId].toString()]
   return tokenChainInfo.decimals
 }
 
