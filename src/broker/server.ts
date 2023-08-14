@@ -1,16 +1,17 @@
 import { MethodLike, Server } from 'jayson'
 import { BROKER_PORT, CHAIN_IDS } from '../conf'
 import { initBlockConfirmations } from '../utils/blockConfirmations'
-import { fetchChains } from '../utils/chains'
+import { fetchChains, fetchTokens } from '../utils/chains'
 import { AssistWithdraw } from './assistor'
 import { getPrice } from './routes'
 
 const methods: { [methodName: string]: MethodLike } = {
-  getPrice,
+  getPrice
 }
 
 export async function brokerServer() {
   await fetchChains()
+  await fetchTokens()
   await initBlockConfirmations()
 
   const assistor = new AssistWithdraw()
