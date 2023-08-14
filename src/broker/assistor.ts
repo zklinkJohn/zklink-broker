@@ -46,7 +46,7 @@ export class AssistWithdraw {
         populateTransaction(chainId, brokerContract),
         {
           requestCountLimit: BROKER_MAXIMUM_PACK_TX_LIMIT,
-          confirmations: blockConfirmations[chainId],
+          confirmations: blockConfirmations[chainId] || 64,
           checkConfirmation: async (txRecpt) => {
             if (
               (await txRecpt.confirmations()) >= blockConfirmations[chainId]
