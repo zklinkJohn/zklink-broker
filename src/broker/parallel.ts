@@ -7,10 +7,9 @@ import {
 import { BROKER_FEE_POLICY } from '../conf'
 import { pool } from '../db'
 import { Address, ChainId, TxHash, Wei } from '../types'
-import { fetchAccount, isGasToken } from '../utils/chains'
 import {
-  encodeAcceptERC20,
-  encodeAcceptETH,
+  buildFastWithdrawFromTx,
+  buildForcedExitFromTx,
   encodeBatchAccept
 } from '../utils/encodeData'
 import {
@@ -21,7 +20,6 @@ import {
 import { SignTxsReturns } from '../witness/routers/signTxs'
 import { watcherServerClient, witnessRpcClient } from './client'
 
-const MAX_ACCEPT_FEE_RATE = BigInt(10000)
 async function fetchFeeData(chainId: number) {
   const response = await watcherServerClient.request('watcher_getFeeData', [
     chainId
@@ -56,7 +54,8 @@ interface RequestObject extends Omit<Request, 'functionData'> {
 
 export async function encodeRequestsData(
   requests: Request[],
-  mainContract: Address
+  mainContract: Address,
+  chainId: ChainId
 ): Promise<string> {
   const objRequests: RequestObject[] = requests.map((v) => {
     return {
@@ -76,12 +75,14 @@ export async function encodeRequestsData(
     if (v.functionData.tx.type === 'ForcedExit') {
       ;[data, amount] = await buildForcedExitFromTx(
         v.functionData as ForcedExitRow,
-        mainContract
+        mainContract,
+        chainId
       )
     } else if (v.functionData.tx.type === 'Withdraw') {
       ;[data, amount] = await buildFastWithdrawFromTx(
         v.functionData as FastWithdrawRow,
-        mainContract
+        mainContract,
+        chainId
       )
     } else {
       throw new Error('fastwithdraw type should be forcedExit or withdraw')
@@ -95,7 +96,8 @@ export async function encodeRequestsData(
 //only for test
 export async function __encodeRequestsData(
   requests: Request[],
-  mainContract: Address
+  mainContract: Address,
+  chainId: ChainId
 ): Promise<[string[], bigint[]]> {
   const objRequests: RequestObject[] = requests.map((v) => {
     return {
@@ -114,12 +116,14 @@ export async function __encodeRequestsData(
     if (v.functionData.tx.type === 'ForcedExit') {
       ;[data, amount] = await buildForcedExitFromTx(
         v.functionData as ForcedExitRow,
-        mainContract
+        mainContract,
+        chainId
       )
     } else if (v.functionData.tx.type === 'Withdraw') {
       ;[data, amount] = await buildFastWithdrawFromTx(
         v.functionData as FastWithdrawRow,
-        mainContract
+        mainContract,
+        chainId
       )
     } else {
       throw new Error('fastwithdraw type should be forcedExit or withdraw')
@@ -130,77 +134,6 @@ export async function __encodeRequestsData(
   return [datas, amounts]
 }
 
-async function buildForcedExitFromTx(
-  row: ForcedExitRow,
-  mainContract: string
-): Promise<[string, bigint]> {
-  const tx = row.tx
-  const accountResp = await fetchAccount(tx.target)
-  const amount = BigInt(tx.exitAmount)
-  const data = isGasToken(tx.l1TargetToken)
-    ? encodeAcceptETH([
-        mainContract,
-        accountResp.id,
-        tx.target,
-        amount,
-        0, //withdrawFeeRatio
-        tx.initiatorAccountId,
-        tx.initiatorSubAccountId,
-        tx.initiatorNonce
-      ])
-    : encodeAcceptERC20([
-        mainContract,
-        accountResp.id,
-        tx.target,
-        tx.l1TargetToken,
-        amount,
-        0, //withdrawFeeRatio
-        tx.initiatorAccountId,
-        tx.initiatorSubAccountId,
-        tx.initiatorNonce,
-        amount
-      ])
-
-  const a = isGasToken(tx.l1TargetToken) ? amount : BigInt(0)
-  return [data, a]
-}
-
-async function buildFastWithdrawFromTx(
-  row: FastWithdrawRow,
-  mainContract: string
-): Promise<[string, bigint]> {
-  const tx = row.tx
-  const amount = BigInt(tx.amount)
-  const data = isGasToken(tx.l1TargetToken)
-    ? encodeAcceptETH([
-        mainContract,
-        tx.accountId,
-        tx.to,
-        amount,
-        tx.withdrawFeeRatio,
-        tx.accountId,
-        tx.subAccountId,
-        tx.nonce
-      ])
-    : encodeAcceptERC20([
-        mainContract,
-        tx.accountId,
-        tx.to,
-        tx.l1TargetToken,
-        amount,
-        tx.withdrawFeeRatio,
-        tx.accountId,
-        tx.subAccountId,
-        tx.nonce,
-        (amount * (MAX_ACCEPT_FEE_RATE - BigInt(tx.withdrawFeeRatio))) /
-          MAX_ACCEPT_FEE_RATE
-      ])
-  const a = isGasToken(tx.l1TargetToken)
-    ? (amount * (MAX_ACCEPT_FEE_RATE - BigInt(tx.withdrawFeeRatio))) /
-      MAX_ACCEPT_FEE_RATE
-    : BigInt(0)
-  return [data, a]
-}
 /**
  * Assembling TransactionRequest data for sending the transaction.
  *
@@ -219,7 +152,7 @@ export function populateTransaction(chainId: ChainId, mainContract: Address) {
     maxPriorityFeePerGas?: string
     gasPrice?: string
   }> {
-    const calldata = await encodeRequestsData(requests, mainContract)
+    const calldata = await encodeRequestsData(requests, mainContract, chainId)
 
     // Retrieve the latest fee configuration through the event watcher service.
     const feeData = await fetchFeeData(chainId)

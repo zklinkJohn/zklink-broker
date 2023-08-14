@@ -1,5 +1,5 @@
 import { zklinkRpcClient } from '../broker/client'
-import { ChainId, L2ChainId } from '../types'
+import { Address, ChainId, L2ChainId, TokenId } from '../types'
 
 export interface ChainInfo {
   chainId: L2ChainId
@@ -7,6 +7,19 @@ export interface ChainInfo {
   web3Url: string
   gasTokenId: number
 }
+export interface TokenChainInfo {
+  chainId: number
+  address: Address
+  decimals: number
+  fastWithdraw: boolean
+}
+export interface TokenInfo {
+  id: TokenId
+  symbol: string
+  chains: { [chainId: string]: TokenChainInfo }
+}
+let tokenInfoMap: { [id: string]: TokenInfo } = {} //token_id -> tokenInfo
+
 export interface AccountInfoResp {
   id: number
   address: string
@@ -29,6 +42,21 @@ export async function fetchChains(): Promise<ChainInfo[]> {
 //only for test
 export function __setChainInfo(chain: ChainInfo) {
   chains.push(chain)
+}
+
+export async function fetchTokens() {
+  const response = await zklinkRpcClient.request('getSupportTokens', [])
+
+  if (response.error) {
+    return Promise.reject(response.error)
+  }
+  tokenInfoMap = response.result
+}
+
+export function getTokenDecimals(chainId: ChainId, tokenId: TokenId): number {
+  const tokenInfo: TokenInfo = tokenInfoMap[tokenId.toString()]
+  const tokenChainInfo = tokenInfo.chains[chainId.toString()]
+  return tokenChainInfo.decimals
 }
 
 export async function fetchAccount(address: string): Promise<AccountInfoResp> {

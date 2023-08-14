@@ -31,11 +31,6 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true
-    },
-    'avax-testnet': {
-      url: 'https://rpc.ankr.com/avalanche_fuji',
-      chainId: 43113,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : ['']
     }
   },
   etherscan: {

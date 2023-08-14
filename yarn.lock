@@ -716,9 +716,9 @@
     rustbn.js "~0.2.0"
 
 "@nomicfoundation/hardhat-chai-matchers@^2.0.0":
-  version "2.0.1"
-  resolved "https://registry.npmmirror.com/@nomicfoundation/hardhat-chai-matchers/-/hardhat-chai-matchers-2.0.1.tgz#0804661e883cd24b5d860f67aeed08a4845c5b6d"
-  integrity sha512-qWKndseO8IPt8HiVamgEAutcBOYtX7/O6NPfe7uMNWxY2ywWaiWjDcRFuYYqxrZOMyQZl6ZuiHxbaRNctTUgLw==
+  version "2.0.2"
+  resolved "https://registry.npmmirror.com/@nomicfoundation/hardhat-chai-matchers/-/hardhat-chai-matchers-2.0.2.tgz#a0e5dbca43ba9560c096da162c0e3245303479d1"
+  integrity sha512-9Wu9mRtkj0U9ohgXYFbB/RQDa+PcEdyBm2suyEtsJf3PqzZEEjLUZgWnMjlFhATMk/fp3BjmnYVPrwl+gr8oEw==
   dependencies:
     "@types/chai-as-promised" "^7.1.3"
     chai-as-promised "^7.1.1"
@@ -746,9 +746,9 @@
   integrity sha512-MsteDXd0UagMksqm9KvcFG6gNKYNa3GGNCy73iQ6bEasEgg2v8Qjl6XA5hjs8o5UD5A3153B6W2BIVJ8SxYUtA==
 
 "@nomicfoundation/hardhat-verify@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nomicfoundation/hardhat-verify/-/hardhat-verify-1.1.0.tgz#36c7f78adebd641d641ab5dd4660111520bb3055"
-  integrity sha512-mXHP17gz4wDsWiXIz8fBRE/8T2KJglWE/QGk5A6nwsubyeqWgjqimfbwTLyaPESphKvis3hX6G75QP5a9Cd8cQ==
+  version "1.1.1"
+  resolved "https://registry.npmmirror.com/@nomicfoundation/hardhat-verify/-/hardhat-verify-1.1.1.tgz#6a433d777ce0172d1f0edf7f2d3e1df14b3ecfc1"
+  integrity sha512-9QsTYD7pcZaQFEA3tBb/D/oCStYDiEVDN7Dxeo/4SCyHRSm86APypxxdOMEPlGmXsAvd+p1j/dTODcpxb8aztA==
   dependencies:
     "@ethersproject/abi" "^5.1.2"
     "@ethersproject/address" "^5.0.2"
@@ -1249,9 +1249,9 @@
     form-data "^3.0.0"
 
 "@types/node@*", "@types/node@^20.3.1":
-  version "20.4.7"
-  resolved "https://registry.npmmirror.com/@types/node/-/node-20.4.7.tgz#74d323a93f1391a63477b27b9aec56669c98b2ab"
-  integrity sha512-bUBrPjEry2QUTsnuEjzjbS7voGWCc30W0qzgMf90GPeDGFRakvrz47ju+oqDAKCXLUCe39u57/ORMl/O/04/9g==
+  version "20.4.10"
+  resolved "https://registry.npmmirror.com/@types/node/-/node-20.4.10.tgz#73c9480791e3ddeb4887a660fc93a7f59353ad45"
+  integrity sha512-vwzFiiy8Rn6E0MtA13/Cxxgpan/N6UeNYR9oUu6kuJWxu6zCk98trcDp8CBhbtaeuq9SykCmXkFr2lWLoPcvLg==
 
 "@types/node@18.15.13":
   version "18.15.13"
@@ -3663,9 +3663,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.3.47:
-  version "1.4.485"
-  resolved "https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.4.485.tgz#fde3ee9ee8112a3414c0dfa545385ad08ec43408"
-  integrity sha512-1ndQ5IBNEnFirPwvyud69GHL+31FkE09gH/CJ6m3KCbkx3i0EVOrjwz4UNxRmN9H8OVHbC6vMRZGN1yCvjSs9w==
+  version "1.4.490"
+  resolved "https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.4.490.tgz#d99286f6e915667fa18ea4554def1aa60eb4d5f1"
+  integrity sha512-6s7NVJz+sATdYnIwhdshx/N/9O6rvMxmhVoDSDFdj6iA45gHR8EQje70+RYsF4GeB+k0IeNSBnP7yG9ZXJFr7A==
 
 elliptic@6.5.4, elliptic@^6.4.0, elliptic@^6.5.2, elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
@@ -7647,10 +7647,10 @@ packet-reader@1.0.0:
   resolved "https://registry.npmmirror.com/packet-reader/-/packet-reader-1.0.0.tgz#9238e5480dedabacfe1fe3f2771063f164157d74"
   integrity sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==
 
-parallel-signer@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.npmmirror.com/parallel-signer/-/parallel-signer-2.0.6.tgz#62c67f98a797d66fdb2b04ae2be0bc35301f76de"
-  integrity sha512-VMNdzxiJOHxufp02gxlBmcq2ohSv3sidUPX9cJsWh6zLpoqL+e2lACQ0cKa+hMhZ5GueSmQ+R+x+X8aER9znSw==
+parallel-signer@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.npmmirror.com/parallel-signer/-/parallel-signer-2.0.7.tgz#5480b7f8b59caca8e2b6f373be44f3f3e87678f0"
+  integrity sha512-QzD7dyvDhkYZiEiNHSrKFWAXP2RdejzPma0uiT8D3FeI6AV/jRO2zrL1mAoWUP4+MgkFFB9uFTecsu5lWpsgbA==
   dependencies:
     ethers "^6.7.0"
 
@@ -9510,9 +9510,9 @@ then-request@^6.0.0:
     qs "^6.4.0"
 
 thread-stream@^2.0.0:
-  version "2.3.0"
-  resolved "https://registry.npmmirror.com/thread-stream/-/thread-stream-2.3.0.tgz#4fc07fb39eff32ae7bad803cb7dd9598349fed33"
-  integrity sha512-kaDqm1DET9pp3NXwR8382WHbnpXnRkN9xGN9dQt3B2+dmXiW8X1SOwmFOxAErEQ47ObhZ96J6yhZNXuyCOL7KA==
+  version "2.4.0"
+  resolved "https://registry.npmmirror.com/thread-stream/-/thread-stream-2.4.0.tgz#5def29598d1d4171ba3bace7e023a71d87d99c07"
+  integrity sha512-xZYtOtmnA63zj04Q+F9bdEay5r47bvpo1CaNqsKi7TpoJHcotUez8Fkfo2RJWpW91lnnaApdpRbVwCWsy+ifcw==
   dependencies:
     real-require "^0.2.0"
 
