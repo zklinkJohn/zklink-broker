@@ -17,7 +17,7 @@ import {
   FastWithdrawTxsResp,
   ForcedExitRow
 } from '../utils/withdrawal'
-import { SignTxsReturns } from '../witness/routers/signTxs'
+import { SignTxsParams, SignTxsReturns } from '../witness/routers/signTxs'
 import { watcherServerClient, witnessRpcClient } from './client'
 
 async function fetchFeeData(chainId: number) {
@@ -34,12 +34,11 @@ async function fetchFeeData(chainId: number) {
 
 async function requestWitnessSignature(
   txs: TxHash[],
-  mainContract: Address
+  mainContract: Address,
+  chainId: ChainId
 ): Promise<SignTxsReturns> {
-  const response = await witnessRpcClient.request('signTxs', [
-    txs,
-    mainContract
-  ])
+  const signTxsParams: SignTxsParams = [txs, mainContract, chainId]
+  const response = await witnessRpcClient.request('signTxs', signTxsParams)
   if (response.error) {
     console.log(2, response.error)
     return Promise.reject(response.error)
@@ -64,7 +63,11 @@ export async function encodeRequestsData(
     }
   })
   const txHashs = objRequests.map((v) => v.functionData.txHash)
-  const { signature } = await requestWitnessSignature(txHashs, mainContract)
+  const { signature } = await requestWitnessSignature(
+    txHashs,
+    mainContract,
+    chainId
+  )
   const datas = []
   const amounts = []
 

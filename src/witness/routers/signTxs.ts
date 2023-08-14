@@ -11,7 +11,7 @@ import { zklinkRpcClient } from '../client'
 import { RPCError } from '../errors'
 import { FastWithdrawRow, ForcedExitRow } from '../../utils/withdrawal'
 import { Address, ChainId, TxHash } from '../../types'
-type SignTxsParams = [TxHash[], Address, ChainId]
+export type SignTxsParams = [TxHash[], Address, ChainId]
 export type SignTxsReturns = { signature: string }
 export async function signTxs(
   params: SignTxsParams,
