@@ -10,8 +10,12 @@ const methods: { [methodName: string]: MethodLike } = {
 }
 
 export async function brokerServer() {
-  await fetchChains()
-  await fetchTokens()
+  await fetchChains().catch((err) => {
+    console.error(err)
+  })
+  await fetchTokens().catch((err) => {
+    console.error(err)
+  })
   await initBlockConfirmations()
 
   const assistor = new AssistWithdraw()

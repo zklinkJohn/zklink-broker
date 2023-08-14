@@ -25,7 +25,7 @@ async function fetchFeeData(chainId: number) {
     chainId
   ])
   if (response.error) {
-    console.log(1, response.error)
+    console.log('rpc watcher_getFeeData', response.error)
     return Promise.reject(response.error)
   } else {
     return response.result
@@ -40,7 +40,7 @@ async function requestWitnessSignature(
   const signTxsParams: SignTxsParams = [txs, mainContract, chainId]
   const response = await witnessRpcClient.request('signTxs', signTxsParams)
   if (response.error) {
-    console.log(2, response.error)
+    console.log('rpc witness signTxs', response.error)
     return Promise.reject(response.error)
   } else {
     return response.result
