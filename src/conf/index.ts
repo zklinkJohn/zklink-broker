@@ -44,4 +44,4 @@ export const ZKLINK_RPC_ENDPOINT = process.env.ZKLINK_RPC_ENDPOINT
 // The time interval between each polling request, in milliseconds.
 export const POLLING_LOGS_INTERVAL = Number(process.env.POLLING_LOGS_INTERVAL)
 // The number of log entries retrieved with each polling request.
-export const POLLING_LOGS_LIMIT = Number(process.env.POLLING_LOGS_INTERVAL)
+export const POLLING_LOGS_LIMIT = Number(process.env.POLLING_LOGS_LIMIT)
