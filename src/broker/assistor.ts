@@ -51,7 +51,7 @@ export class AssistWithdraw {
             if (
               (await txRecpt.confirmations()) >= blockConfirmations[chainId]
             ) {
-              //TODO
+              //TODO decode event log, recog failed accept tx reason. banance
             }
           }
         }
