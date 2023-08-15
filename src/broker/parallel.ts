@@ -47,7 +47,7 @@ async function requestWitnessSignature(
   }
 }
 
-interface RequestObject extends Omit<Request, 'functionData'> {
+export interface RequestObject extends Omit<Request, 'functionData'> {
   functionData: FastWithdrawTxsResp
 }
 
@@ -326,6 +326,75 @@ export class OrderedRequestStore implements IOrderedRequestStore {
       `)
     return r.rows.map((v) => {
       return buildPackedTransaction(v)
+    })
+  }
+
+  //move request line to request_resend
+  async setResendRequest(id: number) {
+    await pool.query(`
+      DO $$ 
+      BEGIN 
+          DECLARE req_row requests%ROWTYPE;
+
+          v_id INTEGER := ${id};
+
+          SELECT INTO req_row 
+          * 
+          FROM requests 
+          WHERE id = v_id;
+
+          INSERT INTO requests_resend(function_data, tx_id, chain_id, log_id, created_at)
+          VALUES(req_row.function_data, req_row.tx_id, req_row.chain_id, req_row.log_id, req_row.created_at);
+
+          DELETE FROM requests WHERE id = v_id;
+
+          COMMIT;
+      EXCEPTION
+          WHEN others THEN
+              ROLLBACK;
+              RAISE;
+      END $$;
+
+    `)
+  }
+
+  //move request_resend line to request
+  async moveResendRequest(id: number) {
+    await pool.query(`
+      DO $$ 
+      BEGIN 
+          DECLARE req_row requests_resend%ROWTYPE;
+
+          v_id INTEGER := ${id};
+
+          SELECT INTO req_row 
+          * 
+          FROM requests_resend 
+          WHERE id = v_id;
+
+          INSERT INTO requests(function_data, tx_id, chain_id, log_id, created_at)
+          VALUES(req_row.function_data, req_row.tx_id, req_row.chain_id, req_row.log_id, req_row.created_at);
+
+          DELETE FROM requests_resend WHERE id = v_id;
+
+          COMMIT;
+      EXCEPTION
+          WHEN others THEN
+              ROLLBACK;
+              RAISE;
+      END $$;
+
+    `)
+  }
+
+  // Get requests where id >= minimalId order by asc??
+  async getRequestsResend(chainId: number): Promise<Request[]> {
+    const r = await pool.query(`
+        SELECT * FROM requests_resend
+        WHERE chain_id = ${chainId} 
+      `)
+    return r.rows.map((v) => {
+      return buildRequest(v)
     })
   }
 }

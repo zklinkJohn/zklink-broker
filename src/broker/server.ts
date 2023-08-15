@@ -21,6 +21,7 @@ export async function brokerServer() {
   const assistor = new AssistWithdraw()
   await assistor.initSigners(CHAIN_IDS)
   assistor.watchNewFastWithdrawalTxs()
+  assistor.watchResendTxs()
 
   const rpcServer = new Server(methods)
   rpcServer.http().listen(BROKER_PORT, () => {
