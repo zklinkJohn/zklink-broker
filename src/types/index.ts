@@ -1,4 +1,5 @@
 export type ChainId = number
+export type TokenId = number
 export type L2ChainId = number
 export type Address = string
 export type BlockNumber = number

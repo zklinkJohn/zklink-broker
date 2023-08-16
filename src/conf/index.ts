@@ -40,8 +40,11 @@ export const WATCHER_SERVER_PORT = process.env.WATCHER_SERVER_PORT
 
 // Pull the pending Withdrawal logs from the block scanning service and use the submitter account to assist users with withdrawals.
 export const ZKLINK_RPC_ENDPOINT = process.env.ZKLINK_RPC_ENDPOINT
+export const ZKLINK_STATIC_ENDPOINT = process.env.ZKLINK_STATIC_ENDPOINT!
 
 // The time interval between each polling request, in milliseconds.
 export const POLLING_LOGS_INTERVAL = Number(process.env.POLLING_LOGS_INTERVAL)
 // The number of log entries retrieved with each polling request.
-export const POLLING_LOGS_LIMIT = Number(process.env.POLLING_LOGS_INTERVAL)
+export const POLLING_LOGS_LIMIT = Number(process.env.POLLING_LOGS_LIMIT)
+// The number of check reqests_resend table
+export const CHECK_RESEND_INTERVAL = Number(process.env.CHECK_RESEND_INTERVAL)

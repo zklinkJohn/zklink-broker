@@ -1,12 +1,13 @@
 import { expect } from 'chai'
+import dotenv from 'dotenv'
+dotenv.config({ path: `.env.devnet`, override: true })
+dotenv.config({ path: `.env.devnet.local`, override: true })
+
 import hre, { ethers } from 'hardhat'
 import { BrokerAccepter, MockToken, ZkLink } from '../../typechain-types'
 import { Wallet, getAddress } from 'ethers'
 import { parseEther } from 'ethers'
 import { Request } from 'parallel-signer'
-import dotenv from 'dotenv'
-dotenv.config({ path: `.env.${process.env.APP_ENV}`, override: true })
-dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
 
 if (!process.env.WITNESS_SINGER_PRIVATE_KEY) {
   process.env.WITNESS_SINGER_PRIVATE_KEY = Wallet.createRandom().privateKey
@@ -53,7 +54,7 @@ describe('witness:signTxs', function () {
       mainContract: Address
     ): Promise<SignTxsReturns> {
       return new Promise((resolve, reject) => {
-        signTxs([txs, mainContract], (err, sigObj) => {
+        signTxs([txs, mainContract, 1], (err, sigObj) => {
           if (err) {
             reject(err)
           }
@@ -64,9 +65,12 @@ describe('witness:signTxs', function () {
     let totalAmount = BigInt(0)
     let acceptEventArray: AcceptEnentType[] = []
     let { signature, result } = (await new Promise((resolve, reject) => {
-      getFastWithdrawTxs([1691201336491000, 2], async (err, result) => {
+      getFastWithdrawTxs([1691201336491000, 10], async (err, result) => {
         if (err) {
           reject(err)
+        }
+        if (result.length == 0) {
+          reject('getFastWithdrawTxs return empty array')
         }
         for (let v of result) {
           const tx = v.tx
@@ -108,7 +112,8 @@ describe('witness:signTxs', function () {
           chainId: 0
         } as Request
       }),
-      brokerAddress
+      brokerAddress,
+      1
     )
     const [owner, Alice, Bob] = await hre.ethers.getSigners()
 
@@ -122,7 +127,6 @@ describe('witness:signTxs', function () {
     await expect(approvezklinkTx)
       .to.emit(token, 'Approval')
       .withArgs(brokerAddress, zkLinkAddress, totalAmount)
-
     const accTx = await broker
       .connect(Alice)
       .batchAccept(datas, amounts, signature)
