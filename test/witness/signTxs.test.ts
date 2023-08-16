@@ -135,6 +135,19 @@ describe('witness:signTxs', function () {
           const parseLog = broker.interface.parseLog(log)
           if (parseLog.name === 'AcceptStatus') {
             acceptStatusLogCount += 1
+            const errorBytes = parseLog?.args[1]
+            const errorMessage = Buffer.from(
+              errorBytes.slice(2),
+              'hex'
+            ).toString('utf8')
+
+            if (errorMessage.includes('insufficient allowance')) {
+              console.log('allowance error')
+            }
+
+            if (errorMessage.includes('transfer amount exceeds balance')) {
+              console.log('transfer amount exceeds balance')
+            }
           }
         } catch (error) {}
       }
