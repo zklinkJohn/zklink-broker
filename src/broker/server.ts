@@ -4,19 +4,20 @@ import { initBlockConfirmations } from '../utils/blockConfirmations'
 import { fetchChains, fetchTokens } from '../utils/chains'
 import { AssistWithdraw } from './assistor'
 import { getPrice } from './routes'
+import { fetchMulticallContracts } from '../utils/multicall'
+import { jobs } from './jobs'
 
 const methods: { [methodName: string]: MethodLike } = {
   getPrice
 }
 
 export async function brokerServer() {
-  await fetchChains().catch((err) => {
-    console.error(err)
-  })
-  await fetchTokens().catch((err) => {
-    console.error(err)
-  })
+  await fetchMulticallContracts()
+  await fetchChains()
+  await fetchTokens()
   await initBlockConfirmations()
+
+  await jobs()
 
   const assistor = new AssistWithdraw()
   await assistor.initSigners(CHAIN_IDS)

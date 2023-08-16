@@ -16,6 +16,7 @@
     "@openzeppelin/contracts": "^4.9.2",
     "ascii-table": "^0.0.9",
     "commander": "^8.2.0",
+    "cron": "^2.4.1",
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "is-number": "^7.0.0",
