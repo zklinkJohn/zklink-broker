@@ -2,9 +2,9 @@ import { CronJob } from 'cron'
 import { Address, ChainId } from '../../types'
 import { getChains, getTokens, layer2ChainId } from '../../utils/chains'
 import { providerByChainId } from '../../utils/providers'
-import { Interface, Wallet } from 'ethers'
-import { BROKER_SINGER_PRIVATE_KEY } from '../../conf'
+import { Interface } from 'ethers'
 import { callMulticall, getMulticallContracts } from '../../utils/multicall'
+import { getBrokerContractsByLayer1Id } from '../../conf/chains'
 
 export function isZeroAddress(tokenAddress: Address): boolean {
   if (!tokenAddress) {
@@ -92,11 +92,10 @@ export async function fetchBalances(chainId: ChainId) {
   const balanceOfAbi = ['function balanceOf(address) view returns (uint256)']
   const iface = new Interface(balanceOfAbi)
   const fragment = iface.getFunction('balanceOf')
-  const wallet = new Wallet(BROKER_SINGER_PRIVATE_KEY)
-  const brokerAddress = wallet.address
+  const brokerAddress = getBrokerContractsByLayer1Id(chainId)
   const calldata = iface.encodeFunctionData(fragment, [brokerAddress])
   const calls = erc20TokenAddresses.map(() => calldata)
-  const resultData = await callMulticall(
+  const erc20Balances = await callMulticall(
     provider,
     multicallAddress,
     balanceOfAbi,
@@ -104,7 +103,6 @@ export async function fetchBalances(chainId: ChainId) {
     erc20TokenAddresses,
     calls
   )
-  const erc20Balances = resultData
 
   if (!balances[chainId]) {
     balances[chainId] = {}

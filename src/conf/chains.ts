@@ -1,3 +1,5 @@
+import { ChainId } from '../types'
+
 export const brokerContracts = {
   // ======== Testnet
   // polygon testnet
@@ -24,4 +26,8 @@ export const brokerContracts = {
   3441005: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35',
   // taiko testnet
   167005: '0xdbA72d5d26823F0E92FacDE8b3CE4f9897595f35'
+}
+
+export function getBrokerContractsByLayer1Id(chainId: ChainId) {
+  return brokerContracts[chainId]
 }
