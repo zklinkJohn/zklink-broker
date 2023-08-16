@@ -28,6 +28,7 @@ import {
   populateTransaction
 } from './parallel'
 import { recoveryDecimals } from '../utils/encodeData'
+import { getBalance } from './jobs/balances'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
@@ -60,9 +61,10 @@ export class AssistWithdraw {
           confirmations: blockConfirmations[chainId] || 64,
           checkConfirmation: async (txRecpt) => {
             if (txRecpt != null) {
-              //decode log
+              // decode log
               // find failed request id
-              // TODO
+              // allowence and balanceof issue
+              // TODO @John
               const id = 1
               await this.requestStore.setResendRequest(id)
             }
@@ -81,7 +83,7 @@ export class AssistWithdraw {
         (v) => Number(v.chainId) === Number(l2ChainId)
       )
 
-      //TODO should not be discarded
+      //TODO @Tyral should not be discarded
       if (CHAIN_IDS.includes(Number(layerOneChainId)) === false) {
         continue
       }
@@ -177,7 +179,7 @@ export class AssistWithdraw {
         }
       }
 
-      await sleep(CHECK_RESEND_INTERVAL)
+      await sleep(Math.max(CHECK_RESEND_INTERVAL, 15000))
     }
   }
   async checkBalance(
@@ -189,8 +191,10 @@ export class AssistWithdraw {
     const _recoveryDecimals = (amount) =>
       recoveryDecimals(amount, getTokenDecimals(chainId, tokenId))
     const amount = _recoveryDecimals(BigInt(_amount))
-
-    //TODO check token balance
-    await this.requestStore.moveResendRequest(requestId)
+    const realBalance = getBalance(chainId, tokenId)
+    //TODO @Tyral need test
+    if (realBalance >= amount) {
+      await this.requestStore.moveResendRequest(requestId)
+    }
   }
 }
