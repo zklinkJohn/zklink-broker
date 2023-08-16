@@ -6,7 +6,7 @@ dotenv.config({ path: `.env.${process.env.APP_ENV}.local`, override: true })
 
 // Create a connection pool
 const pool = new Pool({
-  connectionString: process.env.DATABASE_CONNECTION,
+  connectionString: process.env.DATABASE_CONNECTION
 })
 
 // SQL queries for database and table creation
@@ -21,6 +21,18 @@ const createRequestsTableQuery = `
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
 `
+const createRequestsResendTableQuery = `
+  CREATE TABLE IF NOT EXISTS requests_resend
+  (
+    id SERIAL PRIMARY KEY,
+    function_data TEXT NOT NULL,
+    tx_id VARCHAR(66) NOT NULL,
+    chain_id INTEGER NOT NULL,
+    log_id INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+`
+
 const createPackedTransactionsTableQuery = `
   CREATE TABLE IF NOT EXISTS packed_transactions
   (
@@ -45,6 +57,7 @@ async function initializeDatabase() {
   try {
     // Create the tables
     await client.query(createRequestsTableQuery)
+    await client.query(createRequestsResendTableQuery)
     await client.query(createPackedTransactionsTableQuery)
 
     console.log('Database and tables created successfully')

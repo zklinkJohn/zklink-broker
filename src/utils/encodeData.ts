@@ -106,7 +106,7 @@ export async function buildFastWithdrawFromTx(
   return [data, a]
 }
 
-function recoveryDecimals(amount: bigint, decimals: number): bigint {
+export function recoveryDecimals(amount: bigint, decimals: number): bigint {
   if (decimals === TOKEN_DECIMALS_OF_LAYER2) {
     return amount
   }

@@ -5,6 +5,7 @@ import {
   BROKER_SINGER_PRIVATE_KEY,
   BROKER_STARTED_TIME,
   CHAIN_IDS,
+  CHECK_RESEND_INTERVAL,
   POLLING_LOGS_INTERVAL,
   POLLING_LOGS_LIMIT
 } from '../conf'
@@ -12,16 +13,26 @@ import { brokerContracts } from '../conf/chains'
 import { selectLatestExecutedTimestamp } from '../db/process'
 import { ChainId } from '../types'
 import { getBlockConfirmations } from '../utils/blockConfirmations'
-import { getChains } from '../utils/chains'
+import { getChains, getTokenDecimals } from '../utils/chains'
 import { sleep } from '../utils/sleep'
-import { FastWithdrawTxsResp, groupingRequestParams } from '../utils/withdrawal'
+import {
+  FastWithdrawRow,
+  FastWithdrawTxsResp,
+  ForcedExitRow,
+  groupingRequestParams
+} from '../utils/withdrawal'
 import { zklinkRpcClient } from './client'
-import { OrderedRequestStore, populateTransaction } from './parallel'
+import {
+  OrderedRequestStore,
+  RequestObject,
+  populateTransaction
+} from './parallel'
+import { recoveryDecimals } from '../utils/encodeData'
 
 export class AssistWithdraw {
   private signers: Record<number, ParallelSigner> = {}
   private timestamp: number = BROKER_STARTED_TIME // start log id of fetch new event logs
-
+  private requestStore = new OrderedRequestStore()
   async initSigners(enabledChains: ChainId[]) {
     const layer2Chains = getChains()
     const blockConfirmations = getBlockConfirmations()
@@ -42,16 +53,18 @@ export class AssistWithdraw {
           name: '',
           chainId: chainId
         }),
-        new OrderedRequestStore(),
+        this.requestStore,
         populateTransaction(chainId, brokerContract),
         {
           requestCountLimit: BROKER_MAXIMUM_PACK_TX_LIMIT,
           confirmations: blockConfirmations[chainId] || 64,
           checkConfirmation: async (txRecpt) => {
-            if (
-              (await txRecpt.confirmations()) >= blockConfirmations[chainId]
-            ) {
-              //TODO decode event log, recog failed accept tx reason. banance
+            if (txRecpt != null) {
+              //decode log
+              // find failed request id
+              // TODO
+              const id = 1
+              await this.requestStore.setResendRequest(id)
             }
           }
         }
@@ -68,6 +81,7 @@ export class AssistWithdraw {
         (v) => Number(v.chainId) === Number(l2ChainId)
       )
 
+      //TODO should not be discarded
       if (CHAIN_IDS.includes(Number(layerOneChainId)) === false) {
         continue
       }
@@ -120,5 +134,63 @@ export class AssistWithdraw {
       }
       await sleep(POLLING_LOGS_INTERVAL)
     }
+  }
+
+  async watchResendTxs() {
+    while (true) {
+      for (let chainId of CHAIN_IDS) {
+        const requests = await this.requestStore.getRequestsResend(chainId)
+        if (requests.length == 0) {
+          continue
+        }
+        const objRequests: RequestObject[] = requests.map((v) => {
+          return {
+            ...v,
+            functionData: JSON.parse(v.functionData)
+          }
+        })
+
+        for (let index = 0; index < objRequests.length; index++) {
+          const v = objRequests[index]
+
+          if (v.functionData.tx.type === 'ForcedExit') {
+            let forcedExit = v.functionData as ForcedExitRow
+            await this.checkBalance(
+              v.id,
+              forcedExit.tx.exitAmount,
+              forcedExit.tx.l1TargetToken,
+              chainId
+            )
+          } else if (v.functionData.tx.type === 'Withdraw') {
+            let fastWithdrawRow = v.functionData as FastWithdrawRow
+            await this.checkBalance(
+              v.id,
+              fastWithdrawRow.tx.amount,
+              fastWithdrawRow.tx.l1TargetToken,
+              chainId
+            )
+          } else {
+            throw new Error(
+              'fastwithdraw type should be forcedExit or withdraw'
+            )
+          }
+        }
+      }
+
+      await sleep(CHECK_RESEND_INTERVAL)
+    }
+  }
+  async checkBalance(
+    requestId: number,
+    _amount: string,
+    tokenId: number,
+    chainId: ChainId
+  ) {
+    const _recoveryDecimals = (amount) =>
+      recoveryDecimals(amount, getTokenDecimals(chainId, tokenId))
+    const amount = _recoveryDecimals(BigInt(_amount))
+
+    //TODO check token balance
+    await this.requestStore.moveResendRequest(requestId)
   }
 }
